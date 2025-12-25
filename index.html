@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CT Shoes - Fabricante de zapatos elegantes para mujeres. Juan Gregorio Dávila Zoraca presenta su catálogo de calzado premium.">
+    <meta name="author" content="Juan Gregorio Dávila Zoraca - CT Shoes">
+    <title>CT Shoes | Fabricante de Calzado Elegante</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- AOS Animation -->
+    <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loader-wrapper" id="loader">
+        <div class="loader-content">
+            <div class="loader-logo">
+                <span class="logo-text">CT</span>
+            </div>
+            <div class="loader-bar">
+                <div class="loader-progress"></div>
+            </div>
+            <p class="loader-text">Cargando catálogo...</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <div class="brand-logo">
+                    <span>CT</span>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">CT Shoes</span>
+                    <span class="brand-subtitle">Fabricante de Calzado</span>
+                </div>
+            </div>
+            
+            <button class="mobile-menu-toggle" id="mobileToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#inicio" class="nav-link active">Inicio</a></li>
+                <li><a href="#catalogo" class="nav-link">Catálogo</a></li>
+                <li><a href="#proceso" class="nav-link">Proceso</a></li>
+                <li><a href="#contacto" class="nav-link">Contacto</a></li>
+            </ul>
+            
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="hero">
+        <div class="hero-background">
+            <div class="hero-gradient"></div>
+            <div class="hero-pattern"></div>
+        </div>
+        
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-badge" data-aos="fade-down">
+                    <i class="fas fa-award"></i>
+                    <span>Calidad Artesanal desde 2020</span>
+                </div>
+                
+                <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+                    <span class="title-line">CT Shoes</span>
+                    <span class="title-accent">Calzado Elegante</span>
+                    <span class="title-subtitle">para la Mujer Moderna</span>
+                </h1>
+                
+                <p class="hero-description" data-aos="fade-up" data-aos-delay="200">
+                    Fabricante especializado en zapatos de alta calidad. Diseñados y producidos por 
+                    <strong>Juan Gregorio Dávila Zoraca</strong> con dedicación artesanal y compromiso con la excelencia.
+                </p>
+                
+                <div class="hero-stats" data-aos="fade-up" data-aos-delay="300">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-shoe-prints"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="60">0</div>
+                            <div class="stat-label">Modelos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="1000">0</div>
+                            <div class="stat-label">Clientes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-number" data-target="4">0</div>
+                            <div class="stat-label">Años</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-actions" data-aos="fade-up" data-aos-delay="400">
+                    <a href="#catalogo" class="btn btn-primary">
+                        <span>Ver Catálogo</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <a href="#contacto" class="btn btn-secondary">
+                        <span>Contactar</span>
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="hero-image" data-aos="fade-left" data-aos-delay="500">
+                <div class="image-wrapper">
+                    <div class="image-shine"></div>
+                    <img src="https://via.placeholder.com/700x600?text=CT+Shoes+Collection" alt="Colección CT Shoes" class="hero-img">
+                </div>
+            </div>
+        </div>
+        
+        <div class="scroll-indicator">
+            <span>Desliza para explorar</span>
+            <div class="mouse">
+                <div class="wheel"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section id="proceso" class="process">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Nuestro Proceso</span>
+                <h2 class="section-title">Cómo Fabricamos</h2>
+                <p class="section-description">Un proceso meticuloso que garantiza la calidad</p>
+            </div>
+            
+            <div class="process-timeline">
+                <div class="process-step" data-aos="fade-up" data-aos-delay="100">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <i class="fas fa-pencil-ruler"></i>
+                    </div>
+                    <h3>Diseño</h3>
+                    <p>Creación de diseños únicos y modernos que combinan tendencias actuales con elegancia atemporal.</p>
+                </div>
+                
+                <div class="process-step" data-aos="fade-up" data-aos-delay="200">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <i class="fas fa-cut"></i>
+                    </div>
+                    <h3>Corte</h3>
+                    <p>Selección cuidadosa de materiales premium y corte preciso para garantizar la mejor calidad.</p>
+                </div>
+                
+                <div class="process-step" data-aos="fade-up" data-aos-delay="300">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <h3>Ensamblaje</h3>
+                    <p>Montaje artesanal donde cada detalle es cuidadosamente trabajado por expertos.</p>
+                </div>
+                
+                <div class="process-step" data-aos="fade-up" data-aos-delay="400">
+                    <div class="step-number">04</div>
+                    <div class="step-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h3>Control de Calidad</h3>
+                    <p>Inspección rigurosa de cada par antes de salir de nuestro taller para asegurar perfección.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section id="catalogo" class="catalog">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Catálogo</span>
+                <h2 class="section-title">Nuestros Modelos</h2>
+                <p class="section-description">Explora nuestra colección completa de zapatos elegantes</p>
+            </div>
+            
+            <div class="catalog-filters" data-aos="fade-up" data-aos-delay="100">
+                <div class="filter-group">
+                    <i class="fas fa-filter"></i>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="Plataformas">Plataformas</option>
+                        <option value="Planas">Planas</option>
+                        <option value="De Goma">De Goma</option>
+                        <option value="Melisa">Melisa</option>
+                        <option value="Tacón">Tacón</option>
+                        <option value="Sandalias">Sandalias</option>
+                        <option value="Botas">Botas</option>
+                        <option value="Deportivos">Deportivos</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <i class="fas fa-dollar-sign"></i>
+                    <select id="priceFilter" class="filter-select">
+                        <option value="">Todos los precios</option>
+                        <option value="low">Menos de $150.000</option>
+                        <option value="high">$150.000 o más</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="catalogGrid" class="catalog-grid"></div>
+            
+            <div id="noResults" class="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <p>No se encontraron productos con los filtros seleccionados</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contacto" class="contact">
+        <div class="container">
+            <div class="section-header" data-aos="fade-up">
+                <span class="section-tag">Contacto</span>
+                <h2 class="section-title">Hablemos de tu Proyecto</h2>
+                <p class="section-description">Contáctanos para consultas, pedidos o colaboraciones</p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info" data-aos="fade-right">
+                    <div class="info-header">
+                        <h3>Información de Contacto</h3>
+                        <p>Estamos aquí para ayudarte con cualquier consulta sobre nuestros productos.</p>
+                    </div>
+                    
+                    <div class="info-items">
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div class="info-details">
+                                <h4>Fabricante</h4>
+                                <p>Juan Gregorio Dávila Zoraca</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="info-details">
+                                <h4>Email</h4>
+                                <p>info@ctshoes.com</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fas fa-phone"></i>
+                            </div>
+                            <div class="info-details">
+                                <h4>Teléfono</h4>
+                                <p>+57 300 123 4567</p>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <div class="info-icon">
+                                <i class="fab fa-whatsapp"></i>
+                            </div>
+                            <div class="info-details">
+                                <h4>WhatsApp</h4>
+                                <p>+57 300 123 4567</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="Instagram">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="social-link" aria-label="WhatsApp">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <form class="contact-form" id="contactForm" data-aos="fade-left">
+                    <div class="form-group">
+                        <label for="name">Nombre completo *</label>
+                        <input type="text" id="name" name="name" placeholder="Tu nombre completo" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+57 300 123 4567" required>
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Correo electrónico</label>
+                        <input type="email" id="email" name="email" placeholder="tu@email.com (opcional)">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject">Tipo de consulta *</label>
+                        <select id="subject" name="subject" required>
+                            <option value="">Selecciona un tipo</option>
+                            <option value="pedido">Realizar pedido</option>
+                            <option value="consulta">Consulta sobre productos</option>
+                            <option value="cotizacion">Solicitar cotización</option>
+                            <option value="colaboracion">Colaboración</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                        <i class="fas fa-tag"></i>
+                    </div>
+                    
+                    <div class="form-group" id="cartSummaryGroup" style="display: none;">
+                        <label>Resumen del Pedido</label>
+                        <div class="cart-summary" id="cartSummary">
+                            <!-- Resumen del carrito se mostrará aquí -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Mensaje *</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Cuéntanos cómo podemos ayudarte..." required></textarea>
+                        <i class="fas fa-comment"></i>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary" id="submitBtn" data-send-type="whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                                <span>Enviar por WhatsApp</span>
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="emailBtn" data-send-type="email">
+                                <i class="fas fa-envelope"></i>
+                                <span>Enviar por Email</span>
+                            </button>
+                        </div>
+                        <p class="form-note">
+                            <i class="fas fa-info-circle"></i>
+                            Elige cómo quieres enviar tu consulta. El pedido se guardará automáticamente en ambos casos.
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <div class="brand-logo">
+                        <span>CT</span>
+                    </div>
+                    <div class="footer-text">
+                        <h3>CT Shoes</h3>
+                        <p>Fabricante de calzado elegante para mujeres. Calidad artesanal desde 2020.</p>
+                    </div>
+                </div>
+                
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Navegación</h4>
+                        <ul>
+                            <li><a href="#inicio">Inicio</a></li>
+                            <li><a href="#catalogo">Catálogo</a></li>
+                            <li><a href="#proceso">Proceso</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Información</h4>
+                        <ul>
+                            <li><a href="#contacto">Contacto</a></li>
+                            <li><a href="#">Términos y Condiciones</a></li>
+                            <li><a href="#">Política de Privacidad</a></li>
+                            <li><a href="#">Preguntas Frecuentes</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>Contacto</h4>
+                        <ul>
+                            <li><i class="fas fa-envelope"></i> info@ctshoes.com</li>
+                            <li><i class="fas fa-phone"></i> +57 300 123 4567</li>
+                            <li><i class="fab fa-whatsapp"></i> WhatsApp</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2024 CT Shoes. Fabricado por <strong>Juan Gregorio Dávila Zoraca</strong>. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div class="modal" id="productModal">
+        <div class="modal-backdrop" id="modalBackdrop"></div>
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose" aria-label="Cerrar">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modalImg" src="" alt="">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modalTitle"></h2>
+                    <p id="modalCategory" class="modal-category"></p>
+                    <p id="modalDescription" class="modal-description"></p>
+                    <div class="modal-price-wrapper">
+                        <span class="modal-price" id="modalPrice"></span>
+                    </div>
+                    <div class="modal-sizes-section">
+                        <h3><i class="fas fa-ruler-combined"></i> Seleccionar Tallas y Cantidades</h3>
+                        <div class="sizes-grid" id="sizesGrid">
+                            <!-- Tallas se generarán aquí -->
+                        </div>
+                        <div class="modal-total">
+                            <strong>Total de pares: <span id="modalTotalPairs">0</span></strong>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="btn btn-primary btn-block" id="addToCartBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Agregar al Carrito</span>
+                        </button>
+                        <a href="#" class="btn btn-secondary btn-block" id="whatsappBtn">
+                            <i class="fab fa-whatsapp"></i>
+                            <span>Consultar por WhatsApp</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping Cart -->
+    <div class="cart-float" id="cartFloat">
+        <button class="cart-toggle" id="cartToggle" aria-label="Ver carrito">
+            <i class="fas fa-shopping-cart"></i>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+        <div class="cart-panel" id="cartPanel">
+            <div class="cart-header">
+                <h3><i class="fas fa-shopping-cart"></i> Carrito de Compras</h3>
+                <button class="cart-close" onclick="closeCart()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <div class="cart-empty">
+                    <i class="fas fa-shopping-bag"></i>
+                    <p>Tu carrito está vacío</p>
+                    <p class="cart-empty-hint">Agrega productos desde el catálogo</p>
+                </div>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Total de pares: <span id="cartTotalPairs">0</span></strong>
+                </div>
+                <button class="btn btn-primary btn-block" id="checkoutBtn" onclick="goToCheckout()" disabled>
+                    <i class="fas fa-check"></i>
+                    <span>Realizar Pedido</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/573205891435" class="whatsapp-float" target="_blank" aria-label="Contactar por WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="float-tooltip">¿Necesitas ayuda?</span>
+    </a>
+
+    <!-- Scroll to Top -->
+    <button class="scroll-top" id="scrollTop" aria-label="Ir arriba">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel">
+        <button class="admin-toggle" id="adminToggle" aria-label="Panel de administración" title="Ver pedidos guardados">
+            <i class="fas fa-database"></i>
+        </button>
+        <div class="admin-panel-content" id="adminPanel">
+            <div class="admin-panel-header">
+                <h3><i class="fas fa-database"></i> Pedidos Guardados</h3>
+                <button class="whatsapp-modal-close" onclick="closeAdminPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-stats" id="adminStats">
+                <!-- Stats will be loaded here -->
+            </div>
+            <div class="admin-orders-list" id="adminOrdersList">
+                <!-- Orders will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
