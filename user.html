@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Mi Cuenta - Kalev Shoes">
+    <title>Mi Cuenta | Kalev Shoes</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="user-styles.css">
+</head>
+<body>
+    <!-- Login/Register Screen -->
+    <div class="user-login-screen" id="userLoginScreen">
+        <div class="user-login-container">
+            <div class="user-login-header">
+                <div class="user-logo">
+                    <span>KV</span>
+                </div>
+                <h1>Mi Cuenta</h1>
+                <p>Kalev Shoes</p>
+            </div>
+            <div class="user-tabs">
+                <button class="user-tab active" data-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+                <button class="user-tab" data-tab="register">
+                    <i class="fas fa-user-plus"></i> Registrarse
+                </button>
+            </div>
+            
+            <!-- Login Form -->
+            <div class="user-form-container active" id="loginFormContainer">
+                <div class="user-login-error" id="userLoginError" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="userLoginErrorText"></span>
+                </div>
+                <form id="userLoginForm">
+                    <div class="form-group">
+                        <label for="userPhone">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="userPhone" placeholder="+57 300 123 4567" required autofocus>
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Iniciar Sesión</span>
+                    </button>
+                </form>
+                <p class="user-form-note">
+                    <i class="fas fa-info-circle"></i>
+                    Ingresa el mismo teléfono que usaste al realizar tus pedidos.
+                </p>
+            </div>
+
+            <!-- Register Form -->
+            <div class="user-form-container" id="registerFormContainer">
+                <div class="user-register-error" id="userRegisterError" style="display: none;">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="userRegisterErrorText"></span>
+                </div>
+                <form id="userRegisterForm">
+                    <div class="form-group">
+                        <label for="registerName">Nombre Completo *</label>
+                        <input type="text" id="registerName" placeholder="Tu nombre completo" required>
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPhone">Teléfono / WhatsApp *</label>
+                        <input type="tel" id="registerPhone" placeholder="+57 300 123 4567" required>
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Correo Electrónico (Opcional)</label>
+                        <input type="email" id="registerEmail" placeholder="tu@email.com">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-user-plus"></i>
+                        <span>Registrarse</span>
+                    </button>
+                </form>
+                <p class="user-form-note">
+                    <i class="fas fa-info-circle"></i>
+                    Al registrarte podrás ver todos tus pedidos y consultas en un solo lugar.
+                </p>
+            </div>
+
+            <div class="user-login-footer">
+                <a href="index.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver al sitio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Dashboard -->
+    <div class="user-dashboard" id="userDashboard" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="user-sidebar">
+            <div class="user-sidebar-header">
+                <div class="user-logo">
+                    <span>KV</span>
+                </div>
+                <h2>Kalev Shoes</h2>
+                <p>Mi Cuenta</p>
+            </div>
+            <div class="user-info-card">
+                <div class="user-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 id="userName">Usuario</h3>
+                <p id="userPhoneDisplay">Teléfono</p>
+            </div>
+            <nav class="user-nav">
+                <a href="#" class="user-nav-item active" data-section="orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <span>Mis Pedidos</span>
+                    <span class="nav-badge" id="ordersBadge">0</span>
+                </a>
+                <a href="#" class="user-nav-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Mi Perfil</span>
+                </a>
+            </nav>
+            <div class="user-sidebar-footer">
+                <button class="user-logout-btn" id="userLogoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Cerrar Sesión</span>
+                </button>
+                <a href="index.html" class="back-to-site-btn">
+                    <i class="fas fa-globe"></i>
+                    <span>Ver Catálogo</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="user-main">
+            <header class="user-header">
+                <h1 id="userPageTitle">Mis Pedidos</h1>
+                <div class="user-header-actions">
+                    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </header>
+
+            <div class="user-content">
+                <!-- Orders Section -->
+                <section class="user-section active" id="ordersSection">
+                    <div class="user-stats">
+                        <div class="user-stat-card">
+                            <div class="user-stat-icon"><i class="fas fa-shopping-bag"></i></div>
+                            <div class="user-stat-content">
+                                <div class="user-stat-value" id="statTotalOrders">0</div>
+                                <div class="user-stat-label">Total Pedidos</div>
+                            </div>
+                        </div>
+                        <div class="user-stat-card">
+                            <div class="user-stat-icon"><i class="fas fa-shoe-prints"></i></div>
+                            <div class="user-stat-content">
+                                <div class="user-stat-value" id="statTotalPairs">0</div>
+                                <div class="user-stat-label">Pares Comprados</div>
+                            </div>
+                        </div>
+                        <div class="user-stat-card">
+                            <div class="user-stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="user-stat-content">
+                                <div class="user-stat-value" id="statTotalSpent">$0</div>
+                                <div class="user-stat-label">Total Gastado</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="user-orders-list" id="userOrdersList">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Profile Section -->
+                <section class="user-section" id="profileSection">
+                    <div class="user-profile-card">
+                        <h2>Mi Perfil</h2>
+                        <div class="profile-info">
+                            <div class="profile-item">
+                                <label>Nombre</label>
+                                <p id="profileName">-</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Teléfono</label>
+                                <p id="profilePhone">-</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Email</label>
+                                <p id="profileEmail">-</p>
+                            </div>
+                            <div class="profile-item">
+                                <label>Fecha de Registro</label>
+                                <p id="profileDate">-</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="shared-functions.js"></script>
+    <script src="user-script.js"></script>
+</body>
+</html>
