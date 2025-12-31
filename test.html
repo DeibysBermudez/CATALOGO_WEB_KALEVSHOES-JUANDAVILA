@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Kalev Shoes</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Test de carga</h1>
+    <div id="test-output" class="test">Cargando...</div>
+
+    <script src="supabase-config.js"></script>
+    <script src="shared-functions.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('Test: DOM cargado');
+
+            // Esperar un poco para que se carguen los productos
+            setTimeout(async () => {
+                try {
+                    const products = window.products || [];
+                    console.log('Productos encontrados:', products.length);
+
+                    const output = document.getElementById('test-output');
+                    output.textContent = `✅ ${products.length} productos cargados`;
+
+                    if (products.length > 0) {
+                        output.innerHTML += '<br>Primer producto: ' + products[0].reference;
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    document.getElementById('test-output').textContent = '❌ Error: ' + error.message;
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

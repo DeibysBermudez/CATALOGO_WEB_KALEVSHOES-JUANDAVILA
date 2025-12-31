@@ -32,7 +32,8 @@ function showDashboard() {
     if (loginScreen) loginScreen.style.display = 'none';
     if (dashboard) {
         dashboard.style.display = 'flex';
-        loadDashboard();
+        // Load orders
+        loadOrders();
     }
 }
 
@@ -110,7 +111,8 @@ function switchSection(sectionName) {
     
     // Load section content
     if (sectionName === 'dashboard') {
-        loadDashboard();
+        // Dashboard básico - solo cargar órdenes por ahora
+        loadOrders();
     } else if (sectionName === 'orders') {
         loadOrders();
     } else if (sectionName === 'products') {
@@ -118,61 +120,6 @@ function switchSection(sectionName) {
     } else if (sectionName === 'stats') {
         loadStats();
     }
-}
-
-// ============================================
-// DASHBOARD
-// ============================================
-function loadDashboard() {
-    const stats = getOrderStats();
-    const activeProducts = products.filter(p => p.active !== false).length;
-    
-    document.getElementById('statTotalOrders').textContent = stats.total;
-    document.getElementById('statTotalProducts').textContent = activeProducts;
-    document.getElementById('statSentOrders').textContent = stats.enviados;
-    
-    // Calculate revenue
-    let totalRevenue = 0;
-    const orders = getAllOrders();
-    orders.forEach(order => {
-        if (order.products && order.products.length > 0) {
-            order.products.forEach(item => {
-                totalRevenue += item.price * item.totalPairs;
-            });
-        }
-    });
-    document.getElementById('statTotalRevenue').textContent = `$${totalRevenue.toLocaleString('es-CO')}`;
-    
-    // Update badges
-    document.getElementById('ordersBadge').textContent = stats.total;
-    document.getElementById('productsBadge').textContent = activeProducts;
-    
-    // Load recent orders
-    loadRecentOrders();
-}
-
-function loadRecentOrders() {
-    const orders = getAllOrders().slice(0, 5);
-    const container = document.getElementById('recentOrdersList');
-    
-    if (orders.length === 0) {
-        container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No hay pedidos recientes</p>';
-        return;
-    }
-    
-    container.innerHTML = orders.map(order => `
-        <div class="recent-order-item">
-            <div class="recent-order-info">
-                <h4>${order.name}</h4>
-                <p>${order.dateFormatted || new Date(order.timestamp).toLocaleString('es-CO')}</p>
-            </div>
-            <div class="recent-order-status">
-                <span class="order-badge ${order.whatsappSent ? 'badge-enviado' : 'badge-nuevo'}">
-                    ${order.whatsappSent ? 'Enviado' : 'Nuevo'}
-                </span>
-            </div>
-        </div>
-    `).join('');
 }
 
 // ============================================
@@ -244,7 +191,6 @@ function updateOrderStatus(orderId, newStatus) {
         orders[orderIndex].statusUpdatedAt = new Date().toISOString();
         localStorage.setItem('kalevshoes_orders', JSON.stringify(orders));
         loadOrders();
-        loadDashboard(); // Actualizar dashboard también
         showNotification('Estado del pedido actualizado correctamente', 'success');
     }
 }
@@ -591,4 +537,85 @@ function initializeAdmin() {
 }
 
 document.addEventListener('DOMContentLoaded', initializeAdmin);
+
+// ============================================
+// EXPORT ORDERS FUNCTIONALITY
+// ============================================
+function exportOrders() {
+    try {
+        const orders = getAllOrders();
+        
+        if (!orders || orders.length === 0) {
+            alert('No hay pedidos para exportar');
+            return;
+        }
+        
+// ============================================
+// EXPORT ORDERS FUNCTION
+// ============================================
+function exportOrders() {
+    try {
+        console.log('📤 Iniciando exportación de pedidos...');
+
+        // Obtener todos los pedidos
+        const orders = getAllOrders();
+
+        if (!orders || orders.length === 0) {
+            alert('No hay pedidos para exportar');
+            return;
+        }
+
+        // Formatear datos para exportación
+        const exportData = {
+            exportDate: new Date().toISOString(),
+            totalOrders: orders.length,
+            orders: orders.map(order => ({
+                id: order.id,
+                timestamp: order.timestamp,
+                dateFormatted: order.dateFormatted,
+                status: order.status || 'nuevo',
+                name: order.name,
+                phone: order.phone,
+                email: order.email || '',
+                subject: order.subject,
+                product: order.product || '',
+                message: order.message,
+                products: order.products || [],
+                totalPairs: order.totalPairs || 0,
+                whatsappSent: order.whatsappSent || false,
+                emailSent: order.emailSent || false,
+                sendType: order.sendType || 'whatsapp'
+            }))
+        };
+
+        // Crear blob con datos JSON
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+
+        // Crear enlace de descarga
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `pedidos_kalev_shoes_${new Date().toISOString().split('T')[0]}.json`;
+
+        // Simular click para descargar
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Liberar URL
+        URL.revokeObjectURL(url);
+
+        console.log(`✅ Exportados ${orders.length} pedidos correctamente`);
+        alert(`Se han exportado ${orders.length} pedidos exitosamente`);
+
+    } catch (error) {
+        console.error('Error al exportar pedidos:', error);
+        alert('Error al exportar pedidos. Revisa la consola para más detalles.');
+    }
+}
+
+// Agregar función al objeto global kalevshoesAdmin
+window.kalevshoesAdmin = window.kalevshoesAdmin || {};
+window.kalevshoesAdmin.exportOrders = exportOrders;
 

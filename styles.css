@@ -2,45 +2,54 @@
    VARIABLES & RESET
    ============================================ */
 :root {
-    /* Modern Color Palette - Professional & Creative */
-    --primary: #6366f1;
-    --primary-dark: #4f46e5;
-    --primary-light: #818cf8;
-    --primary-lighter: #a5b4fc;
+    /* Modern Blue Professional Color Palette */
+    --primary: #1e40af; /* Azul profesional principal */
+    --primary-dark: #1e3a8a;
+    --primary-light: #3b82f6;
+    --primary-lighter: #60a5fa;
+    --primary-super-light: #dbeafe;
     
-    --accent: #f59e0b;
-    --accent-light: #fbbf24;
-    --accent-dark: #d97706;
+    --accent: #06b6d4; /* Cyan moderno */
+    --accent-light: #22d3ee;
+    --accent-dark: #0891b2;
     
-    --success: #10b981;
+    --secondary: #64748b; /* Gris azul */
+    --secondary-light: #94a3b8;
+    --secondary-dark: #475569;
+    
+    --success: #10b981; /* Verde moderno */
     --success-light: #34d399;
-    --warning: #f59e0b;
-    --error: #ef4444;
-    --info: #3b82f6;
-    
-    --purple: #8b5cf6;
+    --warning: #f59e0b; /* Amarillo moderno */
+    --error: #ef4444; /* Rojo moderno */
+    --info: #3b82f6; /* Azul info */
+    --purple: #8b5cf6; /* Púrpura moderno */
     --purple-light: #a78bfa;
-    --pink: #ec4899;
+    --pink: #ec4899; /* Rosa moderno */
     --pink-light: #f472b6;
     
-    --bg: #ffffff;
-    --bg-alt: #f8fafc;
+    --bg: #ffffff; /* Blanco puro */
+    --bg-alt: #f8fafc; /* Gris muy claro */
     --bg-card: #ffffff;
-    --bg-hover: #f1f5f9;
+    --bg-hover: #f1f5f9; /* Hover azul claro */
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     
-    --bg-dark: #0f172a;
+    --bg-dark: #0f172a; /* Azul muy oscuro */
     --bg-dark-alt: #1e293b;
-    --bg-dark-card: #1e293b;
+    --bg-dark-card: #334155;
     
-    --text: #1e293b;
+    --text: #1e293b; /* Texto azul oscuro */
     --text-light: #64748b;
     --text-lighter: #94a3b8;
     --text-dark: #ffffff;
-    --text-dark-light: #cbd5e1;
+    --text-dark-light: #f1f5f9;
     
-    --border: #e2e8f0;
+    --border: #e2e8f0; /* Borde azul claro */
     --border-light: #f1f5f9;
-    --border-dark: #334155;
+    --border-dark: #cbd5e1;
+    
+    /* Shadows - Modern & Soft */
+    --shadow-sm: 0 1px 2px 0 rgba(30, 64, 175, 0.05);
+    --shadow: 0 1px 3px 0 rgba(30, 64, 175, 0.1), 0 1px 2px 0 rgba(30, 64, 175, 0.06);
     
     /* Shadows - Modern & Soft */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -50,11 +59,12 @@
     --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
     
-    /* Gradients - Modern & Vibrant */
-    --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
-    --gradient-accent: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
-    --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    /* Gradients - Modern Wood Theme */
+    --gradient-primary: linear-gradient(135deg, #2d5a7d 0%, #4a7ba7 50%, #8b7355 100%);
+    --gradient-accent: linear-gradient(135deg, #d4b08a 0%, #8b7355 100%);
+    --gradient-success: linear-gradient(135deg, #7a9d54 0%, #9bb67a 100%);
+    --gradient-hero: linear-gradient(135deg, #f5f1e8 0%, #e8dcc0 50%, #2d5a7d 100%);
+    --gradient-card: linear-gradient(135deg, rgba(141, 115, 85, 0.1) 0%, rgba(45, 90, 125, 0.1) 100%);
     --gradient-card: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
     
     /* Transitions */
@@ -331,6 +341,42 @@ body.dark-theme .navbar {
     color: white;
     border-color: var(--primary);
     transform: rotate(180deg);
+}
+
+.customer-access-btn,
+.admin-access-btn,
+.diagnostic-btn {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-alt);
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    font-size: 1.1rem;
+}
+
+.customer-access-btn:hover,
+.admin-access-btn:hover,
+.diagnostic-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.diagnostic-btn {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+}
+
+.diagnostic-btn:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
 }
 
 .mobile-menu-toggle {
@@ -943,10 +989,20 @@ body.dark-theme .image-badge {
 
 .catalog-filters {
     display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+    align-items: center;
+    width: 100%;
+}
+
+.filter-row {
+    display: flex;
     justify-content: center;
     gap: 1rem;
-    margin-bottom: 3rem;
     flex-wrap: wrap;
+    width: 100%;
+    max-width: 1200px;
 }
 
 .filter-group {
@@ -958,16 +1014,21 @@ body.dark-theme .image-badge {
     border-radius: 12px;
     border: 2px solid var(--border);
     transition: var(--transition);
+    min-width: 200px;
+    justify-content: center;
+    box-shadow: var(--shadow-sm);
 }
 
 .filter-group:hover {
     border-color: var(--primary);
     box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .filter-group i {
     color: var(--primary);
     font-size: 1rem;
+    flex-shrink: 0;
 }
 
 .filter-select {
@@ -980,7 +1041,52 @@ body.dark-theme .image-badge {
     cursor: pointer;
     outline: none;
     appearance: none;
-    min-width: 200px;
+    min-width: 150px;
+    flex: 1;
+}
+
+.filter-select:focus {
+    outline: none;
+}
+
+/* Advanced Filters */
+.advanced-filters {
+    width: 100%;
+    max-width: 1200px;
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: var(--bg);
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.advanced-filters .filter-row {
+    justify-content: center;
+    margin-bottom: 0;
+}
+
+.filter-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+}
+
+/* Button Styles for Filters */
+#advancedFiltersToggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+#advancedFiltersToggle:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .catalog-grid {
@@ -3783,3 +3889,4 @@ body.dark-theme .image-badge {
         width: 100%;
     }
 }
+

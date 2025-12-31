@@ -3,30 +3,87 @@
 // ============================================
 
 // ============================================
-// PRODUCT MANAGEMENT
+// PRODUCT MANAGEMENT WITH SUPABASE
 // ============================================
 let products = [];
+let useLocalStorage = true; // Fallback a localStorage si Supabase falla
 
 const categories = ['Plataformas', 'Planas', 'De Goma', 'Melisa', 'Tacón', 'Sandalias', 'Botas', 'Deportivos'];
 const colors = ['Negro', 'Blanco', 'Rosa', 'Azul', 'Rojo', 'Beige', 'Plateado'];
 const sizes = ['35', '36', '37', '38', '39', '40', '41'];
+const materials = ['Cuero', 'Sintético', 'Tela', 'Ante', 'Charol'];
+const seasons = ['Primavera', 'Verano', 'Otoño', 'Invierno', 'Todo el año'];
+const collections = ['Clásica', 'Moderna', 'Deportiva', 'Elegante', 'Casual'];
 
-// Cargar productos desde localStorage o generar iniciales
-function loadProducts() {
+// Cargar productos desde Supabase o localStorage
+async function loadProducts() {
     try {
+        // Intentar cargar desde Supabase primero
+        if (typeof window.supabaseAPI !== 'undefined' && window.supabaseAPI.fetchProducts) {
+            try {
+                const dbProducts = await window.supabaseAPI.fetchProducts();
+
+                if (dbProducts && Array.isArray(dbProducts) && dbProducts.length > 0) {
+                    products = dbProducts;
+                    useLocalStorage = false;
+                    console.log(`✅ ${products.length} productos cargados desde Supabase`);
+
+                    // Guardar en localStorage como backup
+                    localStorage.setItem('kalevshoes_products', JSON.stringify(products));
+                    return;
+                } else {
+                    console.log('⚠️ Supabase conectado pero sin productos, usando localStorage');
+                }
+            } catch (supabaseError) {
+                console.warn('⚠️ Error conectando a Supabase:', supabaseError.message);
+                console.log('💡 Usando datos locales como respaldo');
+            }
+        } else {
+            console.log('⚠️ Supabase API no disponible, usando localStorage');
+        }
+
+        // Fallback: Cargar desde localStorage
         const savedProducts = localStorage.getItem('kalevshoes_products');
         if (savedProducts) {
-            products = JSON.parse(savedProducts);
-            console.log(`✅ ${products.length} productos cargados desde almacenamiento`);
-            return;
+            try {
+                const parsedProducts = JSON.parse(savedProducts);
+                if (Array.isArray(parsedProducts) && parsedProducts.length > 0) {
+                    products = parsedProducts;
+                    console.log(`✅ ${products.length} productos cargados desde localStorage`);
+                    return;
+                }
+            } catch (parseError) {
+                console.error('❌ Error parseando productos de localStorage:', parseError);
+                localStorage.removeItem('kalevshoes_products'); // Limpiar datos corruptos
+            }
         }
+
+        // Si no hay productos válidos, generar iniciales
+        console.log('📦 Generando productos iniciales...');
+        generateInitialProducts();
+
     } catch (error) {
-        console.error('Error cargando productos:', error);
+        console.error('❌ Error general cargando productos:', error);
+        console.log('📦 Generando productos iniciales como último recurso...');
+        generateInitialProducts();
     }
-    
-    // Si no hay productos guardados, generar iniciales
-    console.log('📦 Generando productos iniciales...');
+}
+
+// Generar productos iniciales
+function generateInitialProducts() {
     try {
+        // Lista de imágenes de zapatos de mujer desde Unsplash (URLs originales)
+        const shoeImages = [
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=300&fit=crop', // Zapatos elegantes
+            'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?w=400&h=300&fit=crop', // Tacones
+            'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=300&fit=crop', // Botas
+            'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400&h=300&fit=crop', // Deportivos
+            'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=400&h=300&fit=crop', // Sandalias
+            'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=400&h=300&fit=crop', // Plataformas
+            'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop', // Zapatos casuales
+            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop', // Tacón alto
+        ];
+        
         for (let i = 260; i <= 320; i++) {
             const numColors = Math.floor(Math.random() * 4) + 1;
             const numSizes = Math.floor(Math.random() * 5) + 3;
@@ -34,17 +91,26 @@ function loadProducts() {
             const productSizes = sizes.slice(0, numSizes);
             const category = categories[Math.floor(Math.random() * categories.length)];
             const price = (Math.floor(Math.random() * 100) + 100) * 1000;
+            const material = materials[Math.floor(Math.random() * materials.length)];
+            const season = seasons[Math.floor(Math.random() * seasons.length)];
+            const collection = collections[Math.floor(Math.random() * collections.length)];
+            
+            // Seleccionar imagen aleatoria de la lista
+            const randomImage = shoeImages[Math.floor(Math.random() * shoeImages.length)];
             
             products.push({
                 id: `J${i}`,
                 reference: `J${i}`,
                 category: category,
                 price: price,
-                priceFormatted: `$${price.toLocaleString('es-CO')}`,
+                priceFormatted: `${price.toLocaleString('es-CO')}`,
                 description: `Zapato elegante modelo J${i}, perfecto para ocasiones especiales. Diseñado con materiales premium y atención al detalle para brindar máximo confort y estilo.`,
                 colors: productColors,
                 sizes: productSizes,
-                image: `https://via.placeholder.com/400x300?text=Kalev+Shoes+J${i}`,
+                image: randomImage,
+                material: material,
+                season: season,
+                collection: collection,
                 active: true,
                 createdAt: new Date().toISOString()
             });
@@ -56,15 +122,24 @@ function loadProducts() {
     }
 }
 
-// Guardar productos en localStorage
-function saveProducts() {
+// Guardar productos en Supabase y localStorage
+async function saveProducts() {
     try {
+        // Guardar en localStorage siempre (backup)
         localStorage.setItem('kalevshoes_products', JSON.stringify(products));
+        
+        // Si Supabase está disponible, sincronizar
+        if (!useLocalStorage && typeof window.supabaseAPI !== 'undefined') {
+            for (const product of products) {
+                await window.supabaseAPI.saveProductToDB(product);
+            }
+            console.log('✅ Productos sincronizados con Supabase');
+        }
+        
         // Actualizar referencia global
         if (typeof window !== 'undefined') {
             window.products = products;
         }
-        console.log('✅ Productos guardados');
     } catch (error) {
         console.error('❌ Error guardando productos:', error);
     }

@@ -1,6 +1,46 @@
+
 // ============================================
 // INITIALIZATION
 // ============================================
+
+// Escuchar cuando Supabase esté listo
+window.addEventListener('supabase-ready', () => {
+    console.log('🔔 Supabase listo, inicializando suscripciones...');
+    initializeRealtimeSubscriptions();
+});
+
+// Escuchar actualizaciones de productos
+window.addEventListener('products-updated', () => {
+    console.log('🔄 Productos actualizados, recargando catálogo...');
+    renderCatalog();
+});
+
+// Inicializar suscripciones en tiempo real
+function initializeRealtimeSubscriptions() {
+    if (typeof window.supabaseAPI === 'undefined') return;
+    
+    // Suscribirse a cambios en productos
+    window.supabaseAPI.subscribeToProducts((payload) => {
+        console.log('🔔 Cambio en productos:', payload.eventType);
+        // Recargar catálogo cuando haya cambios
+        setTimeout(() => {
+            loadProducts().then(() => {
+                renderCatalog();
+            });
+        }, 500);
+    });
+    
+    // Suscribirse a cambios en pedidos (para admin)
+    window.supabaseAPI.subscribeToOrders((payload) => {
+        console.log('🔔 Cambio en pedidos:', payload.eventType);
+        // Actualizar panel de admin si está abierto
+        if (isAdminLogged()) {
+            setTimeout(() => {
+                loadAdminPanel();
+            }, 500);
+        }
+    });
+}
 
 // Initialize AOS con verificación
 function initAOS() {
@@ -234,6 +274,31 @@ let shoppingCart = [];
 // Tallas disponibles (34-41)
 const AVAILABLE_SIZES = ['34', '35', '36', '37', '38', '39', '40', '41'];
 
+// Funciones de persistencia del carrito
+function saveCartToStorage() {
+    try {
+        localStorage.setItem('kalevshoes_cart', JSON.stringify(shoppingCart));
+    } catch (error) {
+        console.error('Error guardando carrito:', error);
+    }
+}
+
+function loadCartFromStorage() {
+    try {
+        const savedCart = localStorage.getItem('kalevshoes_cart');
+        if (savedCart) {
+            shoppingCart = JSON.parse(savedCart);
+            updateCartUI();
+        }
+    } catch (error) {
+        console.error('Error cargando carrito:', error);
+        shoppingCart = [];
+    }
+}
+
+// Cargar carrito al iniciar
+loadCartFromStorage();
+
 // ============================================
 // PRODUCT CATALOG DATA
 // ============================================
@@ -364,12 +429,12 @@ function renderCatalog(filteredProducts = null) {
 // ============================================
 function applyFilters() {
     const categoryFilter = document.getElementById('categoryFilter')?.value || '';
-    const priceFilter = document.getElementById('priceFilter')?.value || '';
+    const sortFilter = document.getElementById('sortFilter')?.value || '';
     const searchQuery = document.getElementById('productSearch')?.value.trim().toLowerCase() || '';
-    
+
     const allProducts = getProducts();
     let filtered = allProducts.filter(p => p.active !== false);
-    
+
     // Aplicar búsqueda
     if (searchQuery) {
         filtered = filtered.filter(p => {
@@ -377,24 +442,45 @@ function applyFilters() {
             return searchText.includes(searchQuery);
         });
     }
-    
+
     // Aplicar filtro de categoría
     if (categoryFilter) {
         filtered = filtered.filter(p => p.category === categoryFilter);
     }
-    
-    // Aplicar filtro de precio
-    if (priceFilter) {
-        filtered = filtered.filter(p => {
-            return priceFilter === 'low' ? p.price < 150000 : p.price >= 150000;
-        });
+
+    // Aplicar ordenamiento
+    if (sortFilter) {
+        switch (sortFilter) {
+            case 'price-low':
+                filtered.sort((a, b) => a.price - b.price);
+                break;
+            case 'price-high':
+                filtered.sort((a, b) => b.price - a.price);
+                break;
+            case 'name':
+                filtered.sort((a, b) => a.reference.localeCompare(b.reference));
+                break;
+            case 'newest':
+                filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+                break;
+            case 'popular':
+                // Simular popularidad por cantidad de tallas disponibles
+                filtered.sort((a, b) => (b.sizes?.length || 0) - (a.sizes?.length || 0));
+                break;
+            default:
+                // Mantener orden original
+                break;
+        }
     }
-    
+
+    // Actualizar contador de resultados
+    updateResultsCount(filtered.length, allProducts.length);
+
     const grid = document.getElementById('catalogGrid');
     if (grid) {
         grid.style.opacity = '0';
         grid.style.transform = 'translateY(20px)';
-        
+
         setTimeout(() => {
             renderCatalog(filtered);
             grid.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
@@ -404,6 +490,58 @@ function applyFilters() {
     }
 }
 
+function updateResultsCount(filteredCount, totalCount) {
+    const resultsElement = document.getElementById('resultsCount');
+    if (resultsElement) {
+        resultsElement.textContent = `Mostrando ${filteredCount} de ${totalCount} productos`;
+    }
+}
+
+// Función para limpiar todos los filtros
+function clearAllFilters() {
+    const filters = ['categoryFilter', 'sortFilter', 'productSearch'];
+    filters.forEach(filterId => {
+        const element = document.getElementById(filterId);
+        if (element) {
+            if (element.type === 'text' || element.tagName === 'SELECT') {
+                element.value = '';
+            }
+        }
+    });
+    applyFilters();
+}
+
+// ============================================
+// ADVANCED FILTERS TOGGLE
+// ============================================
+function toggleAdvancedFilters() {
+    const advancedFilters = document.getElementById('advancedFilters');
+    const toggleBtn = document.getElementById('advancedFiltersToggle');
+    const toggleIcon = toggleBtn?.querySelector('i');
+    
+    if (advancedFilters.style.display === 'none' || advancedFilters.style.display === '') {
+        advancedFilters.style.display = 'block';
+        advancedFilters.style.maxHeight = '0px';
+        advancedFilters.style.overflow = 'hidden';
+        
+        setTimeout(() => {
+            advancedFilters.style.maxHeight = '200px';
+            advancedFilters.style.transition = 'max-height 0.3s ease';
+        }, 10);
+        
+        if (toggleIcon) toggleIcon.className = 'fas fa-times';
+        if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-times"></i> Ocultar Avanzados';
+    } else {
+        advancedFilters.style.maxHeight = '0px';
+        
+        setTimeout(() => {
+            advancedFilters.style.display = 'none';
+        }, 300);
+        
+        if (toggleIcon) toggleIcon.className = 'fas fa-sliders-h';
+        if (toggleBtn) toggleBtn.innerHTML = '<i class="fas fa-sliders-h"></i> Filtros Avanzados';
+    }
+}
 // Event listener para búsqueda
 let searchTimeout;
 document.addEventListener('DOMContentLoaded', () => {
@@ -598,6 +736,7 @@ function addProductToCart(product) {
     }
     
     updateCart();
+    saveCartToStorage();
     closeModal();
 }
 
@@ -679,6 +818,7 @@ function updateCart() {
 window.removeFromCart = function(index) {
     shoppingCart.splice(index, 1);
     updateCart();
+    saveCartToStorage();
     showNotification('Producto eliminado del carrito', 'success');
 }
 
@@ -803,6 +943,7 @@ function sendCartToWhatsApp() {
     // Vaciar y cerrar carrito después de enviar
     shoppingCart = [];
     updateCart();
+    saveCartToStorage();
     closeCart();
     
     // Actualizar panel admin si está abierto
@@ -2656,19 +2797,6 @@ function viewAllOrders() {
     return orders;
 }
 
-function exportOrders() {
-    const orders = getAllOrders();
-    const dataStr = JSON.stringify(orders, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `pedidos_kalevshoes_${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-    showNotification('Pedidos exportados exitosamente', 'success');
-}
-
 // Función para limpiar pedidos antiguos (más de 30 días)
 function cleanOldOrders() {
     const orders = getAllOrders();
@@ -3074,7 +3202,10 @@ function initializeApp() {
         
         // Add filter event listeners
         const categoryFilter = document.getElementById('categoryFilter');
-        const priceFilter = document.getElementById('priceFilter');
+        const sortFilter = document.getElementById('sortFilter');
+        const materialFilter = document.getElementById('materialFilter');
+        const seasonFilter = document.getElementById('seasonFilter');
+        const collectionFilter = document.getElementById('collectionFilter');
         const productSearch = document.getElementById('productSearch');
         
         if (categoryFilter) {
@@ -3084,11 +3215,32 @@ function initializeApp() {
             console.warn('⚠️ Filtro de categoría no encontrado');
         }
         
-        if (priceFilter) {
-            priceFilter.addEventListener('change', applyFilters);
-            console.log('✓ Filtro de precio configurado');
+        if (sortFilter) {
+            sortFilter.addEventListener('change', applyFilters);
+            console.log('✓ Filtro de ordenamiento configurado');
         } else {
-            console.warn('⚠️ Filtro de precio no encontrado');
+            console.warn('⚠️ Filtro de ordenamiento no encontrado');
+        }
+        
+        if (materialFilter) {
+            materialFilter.addEventListener('change', applyFilters);
+            console.log('✓ Filtro de material configurado');
+        } else {
+            console.warn('⚠️ Filtro de material no encontrado');
+        }
+        
+        if (seasonFilter) {
+            seasonFilter.addEventListener('change', applyFilters);
+            console.log('✓ Filtro de temporada configurado');
+        } else {
+            console.warn('⚠️ Filtro de temporada no encontrado');
+        }
+        
+        if (collectionFilter) {
+            collectionFilter.addEventListener('change', applyFilters);
+            console.log('✓ Filtro de colección configurado');
+        } else {
+            console.warn('⚠️ Filtro de colección no encontrado');
         }
         
         if (productSearch) {
@@ -3152,7 +3304,6 @@ function initializeApp() {
         // Exponer funciones de administración en consola
         window.kalevshoesAdmin = {
             viewOrders: viewAllOrders,
-            exportOrders: exportOrders,
             cleanOrders: cleanOldOrders,
             getOrdersCount: () => getAllOrders().length,
             getStats: getOrderStats,
@@ -3185,8 +3336,11 @@ function initializeApp() {
                     'catalogGrid': document.getElementById('catalogGrid'),
                     'contactForm': document.getElementById('contactForm'),
                     'categoryFilter': document.getElementById('categoryFilter'),
-                    'priceFilter': document.getElementById('priceFilter'),
-                    'productSelect': document.getElementById('productSelect')
+                    'sortFilter': document.getElementById('sortFilter'),
+                    'materialFilter': document.getElementById('materialFilter'),
+                    'seasonFilter': document.getElementById('seasonFilter'),
+                    'collectionFilter': document.getElementById('collectionFilter'),
+                    'productSearch': document.getElementById('productSearch')
                 };
                 
                 console.log('\n📋 Elementos del DOM:');
@@ -3232,7 +3386,6 @@ function initializeApp() {
     console.log('Usa estas funciones en la consola:');
     console.log('- kalevshoesAdmin.diagnose() - 🔍 DIAGNÓSTICO COMPLETO (ejecuta esto si hay problemas)');
     console.log('- kalevshoesAdmin.viewOrders() - Ver todos los pedidos');
-    console.log('- kalevshoesAdmin.exportOrders() - Exportar pedidos a JSON');
     console.log('- kalevshoesAdmin.cleanOrders() - Limpiar pedidos antiguos');
     console.log('- kalevshoesAdmin.getOrdersCount() - Contar pedidos');
     console.log('- kalevshoesAdmin.reloadCatalog() - Recargar catálogo');

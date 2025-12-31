@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnóstico - Kalev Shoes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        .diagnostic-section {
+            margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #3498db;
+        }
+        .diagnostic-section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        .status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.warning { background: #fff3cd; color: #856404; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .code-block {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Diagnóstico del Sistema</h1>
+
+        <div class="diagnostic-section">
+            <h3>📊 Estado General</h3>
+            <div id="generalStatus"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🗄️ Base de Datos (Supabase)</h3>
+            <div id="databaseStatus"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🖼️ Imágenes</h3>
+            <div id="imagesStatus"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🎛️ Filtros y Funcionalidades</h3>
+            <div id="filtersStatus"></div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>🛠️ Acciones de Reparación</h3>
+            <div class="actions">
+                <button onclick="runFullDiagnostic()">Ejecutar Diagnóstico Completo</button>
+                <button onclick="clearLocalStorage()">Limpiar Datos Locales</button>
+                <button onclick="testSupabaseConnection()">Probar Conexión Supabase</button>
+                <button onclick="regenerateProducts()">Regenerar Productos</button>
+                <a href="index.html"><button type="button">Volver al Sitio</button></a>
+            </div>
+        </div>
+
+        <div class="diagnostic-section">
+            <h3>📋 Instrucciones para Supabase</h3>
+            <p>Si hay problemas con la base de datos, sigue estos pasos:</p>
+            <div class="code-block">
+1. Ve a <a href="https://supabase.com/dashboard" target="_blank">Supabase Dashboard</a><br>
+2. Selecciona tu proyecto<br>
+3. Ve a "SQL Editor"<br>
+4. Ejecuta esta consulta:<br><br>
+CREATE TABLE IF NOT EXISTS products (<br>
+&nbsp;&nbsp;&nbsp;&nbsp;id TEXT PRIMARY KEY,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;reference TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;category TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;price INTEGER,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;priceFormatted TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;description TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;colors TEXT[],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;sizes TEXT[],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;image TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;material TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;season TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;collection TEXT,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;active BOOLEAN DEFAULT true,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;createdAt TEXT<br>
+);<br><br>
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;<br><br>
+CREATE POLICY "Allow all operations for products" ON products<br>
+FOR ALL USING (true);
+            </div>
+        </div>
+    </div>
+
+    <script src="supabase-config.js"></script>
+    <script src="shared-functions.js"></script>
+    <script>
+        let diagnosticResults = {};
+
+        async function runFullDiagnostic() {
+            console.log('🔍 Ejecutando diagnóstico completo...');
+
+            // Verificar productos
+            updateStatus('generalStatus', 'info', 'Verificando productos...');
+            const products = getProducts();
+            if (products && products.length > 0) {
+                updateStatus('generalStatus', 'success', `✅ ${products.length} productos encontrados`);
+                diagnosticResults.products = true;
+            } else {
+                updateStatus('generalStatus', 'error', '❌ No se encontraron productos');
+                diagnosticResults.products = false;
+            }
+
+            // Verificar Supabase
+            updateStatus('databaseStatus', 'info', 'Probando conexión a Supabase...');
+            if (typeof window.supabaseAPI !== 'undefined' && window.supabaseAPI.testConnection) {
+                const dbConnected = await window.supabaseAPI.testConnection();
+                if (dbConnected) {
+                    updateStatus('databaseStatus', 'success', '✅ Conexión a Supabase exitosa');
+                    diagnosticResults.database = true;
+                } else {
+                    updateStatus('databaseStatus', 'warning', '⚠️ Supabase no disponible, usando datos locales');
+                    diagnosticResults.database = false;
+                }
+            } else {
+                updateStatus('databaseStatus', 'error', '❌ API de Supabase no cargada');
+                diagnosticResults.database = false;
+            }
+
+            // Verificar imágenes
+            updateStatus('imagesStatus', 'info', 'Verificando imágenes...');
+            const testImage = new Image();
+            testImage.onload = () => {
+                updateStatus('imagesStatus', 'success', '✅ Imágenes cargando correctamente');
+                diagnosticResults.images = true;
+            };
+            testImage.onerror = () => {
+                updateStatus('imagesStatus', 'warning', '⚠️ Algunas imágenes pueden no cargar');
+                diagnosticResults.images = false;
+            };
+            testImage.src = 'https://images.pexels.com/photos/19090/pexels-photo.jpg?w=400&h=300&fit=crop&auto=compress';
+
+            // Verificar filtros
+            updateStatus('filtersStatus', 'info', 'Verificando filtros...');
+            const filters = ['categoryFilter', 'sortFilter', 'materialFilter', 'seasonFilter', 'collectionFilter'];
+            let filtersOk = 0;
+            filters.forEach(filterId => {
+                const element = document.getElementById(filterId);
+                if (element) filtersOk++;
+            });
+
+            if (filtersOk === filters.length) {
+                updateStatus('filtersStatus', 'success', `✅ Todos los filtros encontrados (${filtersOk}/${filters.length})`);
+                diagnosticResults.filters = true;
+            } else {
+                updateStatus('filtersStatus', 'warning', `⚠️ Faltan algunos filtros (${filtersOk}/${filters.length})`);
+                diagnosticResults.filters = false;
+            }
+
+            console.log('✅ Diagnóstico completado', diagnosticResults);
+        }
+
+        function updateStatus(elementId, type, message) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.innerHTML = `<span class="status ${type}">${message}</span>`;
+            }
+        }
+
+        function clearLocalStorage() {
+            if (confirm('¿Estás seguro de que quieres limpiar todos los datos locales? Esto eliminará productos, pedidos y configuraciones guardadas.')) {
+                localStorage.clear();
+                updateStatus('generalStatus', 'success', '✅ Datos locales limpiados');
+                console.log('✅ localStorage limpiado');
+            }
+        }
+
+        async function testSupabaseConnection() {
+            updateStatus('databaseStatus', 'info', 'Probando conexión...');
+            if (typeof window.supabaseAPI !== 'undefined' && window.supabaseAPI.testConnection) {
+                const connected = await window.supabaseAPI.testConnection();
+                if (connected) {
+                    updateStatus('databaseStatus', 'success', '✅ Conexión exitosa');
+                } else {
+                    updateStatus('databaseStatus', 'error', '❌ Error de conexión');
+                }
+            } else {
+                updateStatus('databaseStatus', 'error', '❌ API no disponible');
+            }
+        }
+
+        function regenerateProducts() {
+            if (confirm('¿Regenerar productos? Esto creará nuevos productos de ejemplo.')) {
+                localStorage.removeItem('kalevshoes_products');
+                // Forzar recarga de la página para regenerar productos
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Ejecutar diagnóstico al cargar
+        window.addEventListener('load', () => {
+            setTimeout(runFullDiagnostic, 1000);
+        });
+    </script>
+</body>
+</html>

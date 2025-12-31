@@ -71,6 +71,9 @@
                 <a href="admin.html" class="admin-access-btn" aria-label="Administrador" title="Administrador">
                     <i class="fas fa-user-shield"></i>
                 </a>
+                <a href="diagnostico.html" class="diagnostic-btn" aria-label="Diagnóstico" title="Diagnóstico del Sistema">
+                    <i class="fas fa-stethoscope"></i>
+                </a>
             </div>
         </div>
     </nav>
@@ -206,38 +209,51 @@
             <div class="catalog-search" data-aos="fade-up" data-aos-delay="50">
                 <i class="fas fa-search"></i>
                 <input type="text" id="productSearch" placeholder="Buscar productos por referencia, categoría o descripción...">
+                <div class="search-results" id="resultsCount"></div>
             </div>
-            
+
             <div class="catalog-filters" data-aos="fade-up" data-aos-delay="100">
-                <div class="filter-group">
-                    <i class="fas fa-filter"></i>
-                    <select id="categoryFilter" class="filter-select">
-                        <option value="">Todas las categorías</option>
-                        <option value="Plataformas">Plataformas</option>
-                        <option value="Planas">Planas</option>
-                        <option value="De Goma">De Goma</option>
-                        <option value="Melisa">Melisa</option>
-                        <option value="Tacón">Tacón</option>
-                        <option value="Sandalias">Sandalias</option>
-                        <option value="Botas">Botas</option>
-                        <option value="Deportivos">Deportivos</option>
-                    </select>
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <i class="fas fa-tag"></i>
+                        <select id="categoryFilter" class="filter-select">
+                            <option value="">Mostrar todas</option>
+                            <option value="Plataformas">Plataformas</option>
+                            <option value="Planas">Planas</option>
+                            <option value="De Goma">De Goma</option>
+                            <option value="Melisa">Melisa</option>
+                            <option value="Tacón">Tacón</option>
+                            <option value="Sandalias">Sandalias</option>
+                            <option value="Botas">Botas</option>
+                            <option value="Deportivos">Deportivos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <i class="fas fa-sort"></i>
+                        <select id="sortFilter" class="filter-select">
+                            <option value="">Sin ordenar</option>
+                            <option value="name">Nombre A-Z</option>
+                            <option value="price-low">Precio: Menor a Mayor</option>
+                            <option value="price-high">Precio: Mayor a Menor</option>
+                            <option value="newest">Más Recientes</option>
+                            <option value="popular">Más Populares</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <i class="fas fa-dollar-sign"></i>
-                    <select id="priceFilter" class="filter-select">
-                        <option value="">Todos los precios</option>
-                        <option value="low">Menos de $150.000</option>
-                        <option value="high">$150.000 o más</option>
-                    </select>
+
+                <div class="filter-actions">
+                    <button class="btn btn-outline btn-sm" onclick="clearAllFilters()">
+                        <i class="fas fa-times"></i> Limpiar
+                    </button>
                 </div>
             </div>
-            
+
             <div id="catalogGrid" class="catalog-grid"></div>
-            
+
             <div id="noResults" class="no-results" style="display: none;">
                 <i class="fas fa-search"></i>
                 <p>No se encontraron productos con los filtros seleccionados</p>
+                <button class="btn btn-primary" onclick="clearAllFilters()">Limpiar Filtros</button>
             </div>
         </div>
     </section>
@@ -515,12 +531,13 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
-
-
-    <!-- Scripts -->
+<!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="supabase-config.js"></script>
     <script src="shared-functions.js"></script>
+    <script src="reset-products.js"></script>
     <script src="script.js"></script>
+
 </body>
 </html>

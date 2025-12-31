@@ -117,12 +117,22 @@
             <div class="admin-content">
                 <!-- Dashboard Section -->
                 <section class="admin-section active" id="dashboardSection">
+                    <!-- Main Stats Grid -->
                     <div class="admin-stats-grid">
                         <div class="stat-card-large">
                             <div class="stat-icon"><i class="fas fa-shopping-bag"></i></div>
                             <div class="stat-content">
                                 <div class="stat-value" id="statTotalOrders">0</div>
                                 <div class="stat-label">Total Pedidos</div>
+                                <div class="stat-trend" id="ordersTrend">+0%</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-large">
+                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statTotalRevenue">$0</div>
+                                <div class="stat-label">Ingresos Totales</div>
+                                <div class="stat-trend" id="revenueTrend">+0%</div>
                             </div>
                         </div>
                         <div class="stat-card-large">
@@ -133,24 +143,100 @@
                             </div>
                         </div>
                         <div class="stat-card-large">
-                            <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
                             <div class="stat-content">
-                                <div class="stat-value" id="statSentOrders">0</div>
-                                <div class="stat-label">Pedidos Enviados</div>
-                            </div>
-                        </div>
-                        <div class="stat-card-large">
-                            <div class="stat-icon"><i class="fas fa-dollar-sign"></i></div>
-                            <div class="stat-content">
-                                <div class="stat-value" id="statTotalRevenue">$0</div>
-                                <div class="stat-label">Ingresos Totales</div>
+                                <div class="stat-value" id="statConversionRate">0%</div>
+                                <div class="stat-label">Tasa Conversión</div>
                             </div>
                         </div>
                     </div>
-                    <div class="admin-recent-orders">
-                        <h3>Pedidos Recientes</h3>
-                        <div id="recentOrdersList">
-                            <!-- Recent orders will be loaded here -->
+
+                    <!-- Secondary Stats -->
+                    <div class="admin-stats-secondary">
+                        <div class="stat-card-medium">
+                            <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statTodayRevenue">$0</div>
+                                <div class="stat-label">Hoy</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-medium">
+                            <div class="stat-icon"><i class="fas fa-calendar-week"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statWeekRevenue">$0</div>
+                                <div class="stat-label">Esta Semana</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-medium">
+                            <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statMonthRevenue">$0</div>
+                                <div class="stat-label">Este Mes</div>
+                            </div>
+                        </div>
+                        <div class="stat-card-medium">
+                            <div class="stat-icon"><i class="fas fa-receipt"></i></div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="statAvgOrderValue">$0</div>
+                                <div class="stat-label">Valor Promedio</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts and Analytics -->
+                    <div class="admin-analytics-grid">
+                        <!-- Sales Chart -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h3><i class="fas fa-chart-line"></i> Ventas por Día</h3>
+                                <span class="analytics-period">Últimos 7 días</span>
+                            </div>
+                            <div class="analytics-chart" id="salesChart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <p>Gráfico de ventas</p>
+                                    <small>Implementar con Chart.js</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Orders Status Chart -->
+                        <div class="analytics-card">
+                            <div class="analytics-header">
+                                <h3><i class="fas fa-chart-pie"></i> Estado de Pedidos</h3>
+                            </div>
+                            <div class="analytics-chart" id="statusChart">
+                                <div class="chart-placeholder">
+                                    <i class="fas fa-chart-pie"></i>
+                                    <p>Distribución por estado</p>
+                                    <small>Implementar con Chart.js</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Section -->
+                    <div class="admin-dashboard-bottom">
+                        <!-- Recent Activity -->
+                        <div class="dashboard-section">
+                            <div class="section-header">
+                                <h3><i class="fas fa-clock"></i> Actividad Reciente</h3>
+                                <a href="#" onclick="switchSection('orders')" class="view-all-link">Ver todos</a>
+                            </div>
+                            <div class="recent-activity-list" id="recentActivityList">
+                                <!-- Activity will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Top Products -->
+                        <div class="dashboard-section">
+                            <div class="section-header">
+                                <h3><i class="fas fa-trophy"></i> Productos Más Vendidos</h3>
+                                <a href="#" onclick="switchSection('products')" class="view-all-link">Ver todos</a>
+                            </div>
+                            <div class="top-products-list" id="topProductsList">
+                                <!-- Top products will be loaded here -->
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -165,6 +251,9 @@
                                 <option value="nuevo">Nuevos</option>
                                 <option value="enviado">Enviados</option>
                             </select>
+                            <button class="btn btn-primary btn-sm" onclick="exportOrders()" style="margin-left: 1rem;">
+                                <i class="fas fa-download"></i> Exportar Pedidos
+                            </button>
                         </div>
                     </div>
                     <div class="admin-orders-list" id="adminOrdersList">
@@ -274,6 +363,7 @@
     </div>
 
     <!-- Scripts -->
+    <script src="supabase-config.js"></script>
     <script src="shared-functions.js"></script>
     <script src="admin-script.js"></script>
 </body>
