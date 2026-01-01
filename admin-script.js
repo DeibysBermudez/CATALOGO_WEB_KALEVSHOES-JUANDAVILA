@@ -3,8 +3,8 @@
 // ============================================
 
 const ADMIN_CREDENTIALS = {
-    username: 'kalevadmin',
-    password: 'kalev2025'
+    username: 'kalebadmin',
+    password: 'kaleb2025'
 };
 
 // ============================================
@@ -38,18 +38,18 @@ function showDashboard() {
 }
 
 function handleAdminLogin(e) {
-    if (e) e.preventDefault();
-    
+    e.preventDefault(); // Siempre prevenir el envío del formulario
+
     const username = document.getElementById('adminUsername').value.trim();
     const password = document.getElementById('adminPassword').value.trim();
     const errorDiv = document.getElementById('adminLoginError');
     const errorText = document.getElementById('adminLoginErrorText');
-    
+
     if (!username || !password) {
         showError('Por favor completa todos los campos');
         return;
     }
-    
+
     if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
         localStorage.setItem('adminLogged', 'true');
         showDashboard();

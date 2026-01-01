@@ -285,10 +285,10 @@ function saveCartToStorage() {
 
 function loadCartFromStorage() {
     try {
-        const savedCart = localStorage.getItem('kalevshoes_cart');
+        const savedCart = localStorage.getItem('kalebshoes_cart');
         if (savedCart) {
             shoppingCart = JSON.parse(savedCart);
-            updateCartUI();
+            updateCart();
         }
     } catch (error) {
         console.error('Error cargando carrito:', error);
@@ -386,7 +386,7 @@ function renderCatalog(filteredProducts = null) {
                 card.onclick = () => openModal(product);
                 
         card.innerHTML = `
-                    <img src="${product.image}" alt="${product.reference}" class="product-image" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=CT+Shoes+${product.reference}'">
+                    <img src="${product.image}" alt="${product.reference}" class="product-image" loading="lazy" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5YTNhZiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPkthbGViIFNob2VzPC90ZXh0Pjwvc3ZnPg=='">
                     <div class="product-info">
                         <div class="product-reference">${product.reference}</div>
                         <div class="product-category">${product.category}</div>
@@ -1193,18 +1193,19 @@ function setupProductSelector() {
 // Llenar selector de productos
 function populateProductSelect() {
     try {
+        const productSelect = document.getElementById('productSelect');
         if (!productSelect) {
             console.warn('⚠️ Selector de productos no encontrado');
             return;
         }
-        
+
         productSelect.innerHTML = '<option value="">Selecciona un producto</option>';
-        
+
         if (!products || products.length === 0) {
             console.warn('⚠️ No hay productos para llenar el selector');
             return;
         }
-        
+
         products.forEach(product => {
             try {
                 const option = document.createElement('option');
@@ -1215,7 +1216,7 @@ function populateProductSelect() {
                 console.error(`Error agregando producto ${product.reference} al selector:`, error);
             }
         });
-        
+
         console.log(`✓ Selector de productos poblado con ${products.length} opciones`);
     } catch (error) {
         console.error('❌ Error en populateProductSelect:', error);
@@ -1984,8 +1985,8 @@ document.head.appendChild(notificationStyle);
 // USER AUTHENTICATION SYSTEM
 // ============================================
 const ADMIN_CREDENTIALS = {
-    username: 'kalevadmin',
-    password: 'kalev2025'
+    username: 'kalebadmin',
+    password: 'kaleb2025'
 };
 
 // ============================================
@@ -3137,7 +3138,7 @@ window.closeProductModal = closeProductModal;
 // ============================================
 function initializeApp() {
 
-        console.log('🚀 Inicializando Kalev Shoes...');
+        console.log('🚀 Inicializando Kaleb Shoes...');
         
         // Verificar secciones
         verifySections();
@@ -3379,7 +3380,7 @@ function initializeApp() {
             }
         };
         
-        console.log('\n✅ Kalev Shoes - Inicialización completa');
+        console.log('\n✅ Kaleb Shoes - Inicialización completa');
         console.log(`📦 Productos disponibles: ${products.length}`);
         console.log(`💾 Pedidos guardados: ${getAllOrders().length}`);
     console.log('\n=== FUNCIONES DE ADMINISTRACIÓN ===');
@@ -3403,7 +3404,42 @@ function initializeApp() {
             }
         }
     }, 2000);
+
+    // Inicializar menú móvil
+    initMobileMenu();
+    console.log('✓ Menú móvil inicializado');
 } // Fin de initializeApp()
+
+// ============================================
+// MOBILE MENU FUNCTIONALITY
+// ============================================
+function initMobileMenu() {
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const navMenu = document.querySelector('.nav-menu');
+
+    if (mobileMenuToggle && navMenu) {
+        mobileMenuToggle.addEventListener('click', () => {
+            mobileMenuToggle.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Cerrar menú al hacer clic en un enlace
+        navMenu.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Cerrar menú al hacer clic fuera
+        document.addEventListener('click', (e) => {
+            if (!mobileMenuToggle.contains(e.target) && !navMenu.contains(e.target)) {
+                mobileMenuToggle.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+    }
+}
 
 // Ejecutar cuando el DOM esté listo
 if (document.readyState === 'loading') {

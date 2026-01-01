@@ -16,7 +16,10 @@ if (SUPABASE_URL === 'https://iwevhextahozqtlrfpjm.supabase.co' || SUPABASE_ANON
 // Cargar librería de Supabase desde CDN
 const script = document.createElement('script');
 script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-script.onload = initializeSupabase;
+script.onload = function() {
+    // La librería crea window.supabase automáticamente
+    initializeSupabase();
+};
 document.head.appendChild(script);
 
 let supabase = null;
@@ -24,14 +27,21 @@ let isSupabaseReady = false;
 
 function initializeSupabase() {
     try {
+        if (typeof window.supabase === 'undefined') {
+            console.error('❌ La librería Supabase no se cargó correctamente');
+            return;
+        }
+
         supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         isSupabaseReady = true;
         console.log('✅ Supabase inicializado correctamente');
-        
+
         // Trigger evento personalizado para notificar que está listo
         window.dispatchEvent(new Event('supabase-ready'));
     } catch (error) {
         console.error('❌ Error inicializando Supabase:', error);
+        // Continuar sin Supabase
+        isSupabaseReady = false;
     }
 }
 
@@ -390,9 +400,83 @@ function subscribeToOrders(callback) {
     return subscription;
 }
 
+function subscribeToOrders(callback) {
+    if (!isSupabaseReady) return null;
+    
+    const subscription = supabase
+        .channel('orders-changes')
+        .on('postgres_changes',
+            { event: '*', schema: 'public', table: 'orders' },
+            callback
+        )
+        .subscribe();
+    
+    console.log('🔔 Suscrito a cambios en pedidos');
+    return subscription;
+}
+
+// Función para guardar todos los productos
+async function saveProducts(productsArray) {
+    if (!isSupabaseReady) return false;
+    
+    try {
+        // Primero, obtener productos existentes para comparar
+        const { data: existingProducts, error: fetchError } = await supabase
+            .from('products')
+            .select('id');
+        
+        if (fetchError) throw fetchError;
+        
+        const existingIds = new Set(existingProducts.map(p => p.id));
+        const newIds = new Set(productsArray.map(p => p.id || p.reference));
+        
+        // Productos a eliminar (existen en BD pero no en array)
+        const toDelete = [...existingIds].filter(id => !newIds.has(id));
+        
+        // Productos a insertar/actualizar
+        const toUpsert = productsArray.map(product => ({
+            id: product.id || product.reference,
+            reference: product.reference,
+            category: product.category,
+            price: product.price,
+            price_formatted: product.priceFormatted,
+            description: product.description,
+            image: product.image,
+            active: product.active !== false
+        }));
+        
+        // Eliminar productos que ya no existen
+        if (toDelete.length > 0) {
+            const { error: deleteError } = await supabase
+                .from('products')
+                .delete()
+                .in('id', toDelete);
+            
+            if (deleteError) throw deleteError;
+            console.log(`🗑️ Eliminados ${toDelete.length} productos obsoletos`);
+        }
+        
+        // Insertar/actualizar productos
+        if (toUpsert.length > 0) {
+            const { error: upsertError } = await supabase
+                .from('products')
+                .upsert(toUpsert, { onConflict: 'id' });
+            
+            if (upsertError) throw upsertError;
+            console.log(`💾 Guardados/actualizados ${toUpsert.length} productos`);
+        }
+        
+        return true;
+    } catch (error) {
+        console.error('Error guardando productos:', error);
+        return false;
+    }
+}
+
 // Exportar funciones globalmente
 window.supabaseAPI = {
     fetchProducts,
+    saveProducts,
     saveProductToDB,
     deleteProductFromDB,
     saveOrderToDB,

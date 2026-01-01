@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Kalev Shoes - Fabricante de zapatos elegantes para mujeres. Catálogo de calzado premium.">
-    <meta name="author" content="Kalev Shoes">
-    <title>Kalev Shoes | Fabricante de Calzado Elegante</title>
+    <meta name="description" content="Kaleb Shoes - Fabricante de zapatos elegantes para mujeres. Catálogo de calzado premium.">
+    <meta name="author" content="Kaleb Shoes">
+    <title>Kaleb Shoes | Fabricante de Calzado Elegante</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +26,7 @@
     <div class="loader-wrapper" id="loader">
         <div class="loader-content">
             <div class="loader-logo">
-                <span class="logo-text">KV</span>
+                <img src="image.png" alt="Kaleb Shoes Logo" class="logo-image">
             </div>
             <div class="loader-bar">
                 <div class="loader-progress"></div>
@@ -40,10 +40,10 @@
         <div class="nav-container">
             <div class="nav-brand">
                 <div class="brand-logo">
-                    <span>KV</span>
+                    <img src="image.png" alt="Kaleb Shoes Logo" class="logo-image">
                 </div>
                 <div class="brand-text">
-                    <span class="brand-name">Kalev Shoes</span>
+                    <span class="brand-name">Kaleb Shoes</span>
                     <span class="brand-subtitle">Calzado de Calidad</span>
                 </div>
             </div>
@@ -68,9 +68,9 @@
                 <a href="user.html" class="customer-access-btn" aria-label="Mi Cuenta" title="Mi Cuenta">
                     <i class="fas fa-user"></i>
                 </a>
-                <a href="admin.html" class="admin-access-btn" aria-label="Administrador" title="Administrador">
+                <button class="admin-access-btn" id="adminAccessBtn" aria-label="Administrador" title="Administrador">
                     <i class="fas fa-user-shield"></i>
-                </a>
+                </button>
                 <a href="diagnostico.html" class="diagnostic-btn" aria-label="Diagnóstico" title="Diagnóstico del Sistema">
                     <i class="fas fa-stethoscope"></i>
                 </a>
@@ -135,7 +135,7 @@
             <div class="hero-image" data-aos="fade-left" data-aos-delay="500">
                 <div class="image-wrapper">
                     <div class="image-shine"></div>
-                    <img src="https://via.placeholder.com/700x600?text=Kalev+Shoes+Collection" alt="Colección Kalev Shoes" class="hero-img">
+                    <img src="https://via.placeholder.com/700x600?text=Kaleb+Shoes+Collection" alt="Colección Kaleb Shoes" class="hero-img">
                 </div>
             </div>
         </div>
@@ -401,10 +401,10 @@
             <div class="footer-content">
                 <div class="footer-brand">
                     <div class="brand-logo">
-                        <span>KV</span>
+                        <img src="image.png" alt="Kaleb Shoes Logo" class="logo-image">
                     </div>
                     <div class="footer-text">
-                        <h3>Kalev Shoes</h3>
+                        <h3>Kaleb Shoes</h3>
                         <p>Fabricante de calzado elegante para mujeres. Calidad artesanal desde 2020.</p>
                     </div>
                 </div>
@@ -441,7 +441,7 @@
             </div>
             
             <div class="footer-bottom">
-                <p>&copy; 2024 Kalev Shoes. Todos los derechos reservados.</p>
+                <p>&copy; 2024 Kaleb Shoes. Todos los derechos reservados.</p>
             </div>
         </div>
     </footer>
@@ -516,6 +516,179 @@
                     <i class="fas fa-check"></i>
                     <span>Realizar Pedido</span>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Access Modal -->
+    <div class="admin-modal" id="adminAccessModal" style="display: none;">
+        <div class="admin-modal-backdrop" id="adminAccessBackdrop" onclick="closeAdminAccessModal()"></div>
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3><i class="fas fa-user-shield"></i> Acceso Administrador</h3>
+                <button class="admin-modal-close" onclick="closeAdminAccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-modal-body" id="adminAccessBody">
+                <!-- Contenido dinámico -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Container -->
+    <div class="admin-panel-container" id="adminPanelContainer" style="display: none;">
+        <div class="admin-panel" id="adminPanel">
+            <div class="admin-panel-header">
+                <h2><i class="fas fa-cog"></i> Panel de Administración</h2>
+                <button class="admin-panel-close" onclick="closeAdminPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="admin-content-wrapper">
+                <!-- Stats Section -->
+                <div class="admin-stats" id="adminStats">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalOrders">0</div>
+                                <div class="stat-label">Total Pedidos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="pendingOrders">0</div>
+                                <div class="stat-label">Pendientes</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="completedOrders">0</div>
+                                <div class="stat-label">Completados</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalRevenue">$0</div>
+                                <div class="stat-label">Ingresos Totales</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Orders List -->
+                <div class="admin-orders-list" id="adminOrdersList">
+                    <!-- Pedidos se cargarán aquí -->
+                </div>
+                
+                <!-- Products Container -->
+                <div class="admin-products-container" id="adminProductsContainer" style="display: none;">
+                    <!-- Gestión de productos -->
+                </div>
+                
+                <!-- Stats Container -->
+                <div class="admin-stats-container" id="adminStatsContainer" style="display: none;">
+                    <!-- Estadísticas detalladas -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Access Modal -->
+    <div class="customer-modal" id="customerAccessModal" style="display: none;">
+        <div class="customer-modal-backdrop" onclick="closeCustomerAccessModal()"></div>
+        <div class="customer-modal-content">
+            <div class="customer-modal-header">
+                <h3><i class="fas fa-user"></i> Acceso de Usuario</h3>
+                <button class="customer-modal-close" onclick="closeCustomerAccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="customer-modal-body">
+                <div class="access-tabs">
+                    <button class="access-tab active" data-tab="login">Iniciar Sesión</button>
+                    <button class="access-tab" data-tab="register">Registrarse</button>
+                </div>
+                <div class="access-content">
+                    <!-- Login Tab -->
+                    <div class="access-panel active" id="loginPanel">
+                        <div class="customer-login-error" id="customerLoginError">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="customerLoginErrorText"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="customerPhone">Número de Teléfono</label>
+                            <input type="tel" id="customerPhone" placeholder="+57 300 123 4567" required>
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="handleCustomerLogin()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Iniciar Sesión</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Register Tab -->
+                    <div class="access-panel" id="registerPanel">
+                        <div class="customer-register-error" id="customerRegisterError">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <span id="customerRegisterErrorText"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerName">Nombre Completo</label>
+                            <input type="text" id="registerName" placeholder="Tu nombre completo" required>
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerPhone">Número de Teléfono</label>
+                            <input type="tel" id="registerPhone" placeholder="+57 300 123 4567" required>
+                            <i class="fab fa-whatsapp"></i>
+                        </div>
+                        <div class="form-group">
+                            <label for="registerEmail">Correo Electrónico (Opcional)</label>
+                            <input type="email" id="registerEmail" placeholder="tu@email.com">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <button class="btn btn-primary btn-block" onclick="handleCustomerRegister()">
+                            <i class="fas fa-user-plus"></i>
+                            <span>Registrarse</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Panel -->
+    <div class="customer-panel-container" id="customerPanelContainer" style="display: none;">
+        <div class="customer-panel">
+            <div class="customer-panel-header">
+                <h2><i class="fas fa-user"></i> Mi Cuenta</h2>
+                <button class="customer-panel-close" onclick="closeCustomerPanel()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="customer-panel-content">
+                <div class="customer-orders-list" id="customerOrdersList">
+                    <!-- Pedidos del cliente -->
+                </div>
+                <div class="customer-actions">
+                    <button class="btn btn-secondary" onclick="logoutCustomer()">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

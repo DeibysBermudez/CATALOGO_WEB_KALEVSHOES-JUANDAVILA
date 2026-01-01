@@ -29,7 +29,7 @@ async function loadProducts() {
                     console.log(`✅ ${products.length} productos cargados desde Supabase`);
 
                     // Guardar en localStorage como backup
-                    localStorage.setItem('kalevshoes_products', JSON.stringify(products));
+                    localStorage.setItem('kalebshoes_products', JSON.stringify(products));
                     return;
                 } else {
                     console.log('⚠️ Supabase conectado pero sin productos, usando localStorage');
@@ -43,7 +43,7 @@ async function loadProducts() {
         }
 
         // Fallback: Cargar desde localStorage
-        const savedProducts = localStorage.getItem('kalevshoes_products');
+        const savedProducts = localStorage.getItem('kalebshoes_products');
         if (savedProducts) {
             try {
                 const parsedProducts = JSON.parse(savedProducts);
@@ -54,7 +54,7 @@ async function loadProducts() {
                 }
             } catch (parseError) {
                 console.error('❌ Error parseando productos de localStorage:', parseError);
-                localStorage.removeItem('kalevshoes_products'); // Limpiar datos corruptos
+                localStorage.removeItem('kalebshoes_products'); // Limpiar datos corruptos
             }
         }
 
@@ -72,16 +72,23 @@ async function loadProducts() {
 // Generar productos iniciales
 function generateInitialProducts() {
     try {
-        // Lista de imágenes de zapatos de mujer desde Unsplash (URLs originales)
+        // Lista de imágenes reales de zapatos de mujer de alta calidad
         const shoeImages = [
-            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=300&fit=crop', // Zapatos elegantes
-            'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?w=400&h=300&fit=crop', // Tacones
-            'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=300&fit=crop', // Botas
-            'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400&h=300&fit=crop', // Deportivos
-            'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=400&h=300&fit=crop', // Sandalias
-            'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=400&h=300&fit=crop', // Plataformas
-            'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop', // Zapatos casuales
-            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop', // Tacón alto
+            'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&h=300&fit=crop', // Zapatos elegantes negros
+            'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?w=400&h=300&fit=crop', // Tacones altos rojos
+            'https://images.unsplash.com/photo-1560343090-f0409e92791a?w=400&h=300&fit=crop', // Botas marrones
+            'https://images.unsplash.com/photo-1603808033192-082d6919d3e1?w=400&h=300&fit=crop', // Deportivos blancos
+            'https://images.unsplash.com/photo-1519415510236-718bdfcd89c8?w=400&h=300&fit=crop', // Sandalias doradas
+            'https://images.unsplash.com/photo-1518049362265-d5b2a6467637?w=400&h=300&fit=crop', // Plataformas blancas
+            'https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=400&h=300&fit=crop', // Zapatos casuales azules
+            'https://images.unsplash.com/photo-1551107696-a4b0c5a0d9a2?w=400&h=300&fit=crop', // Tacón alto negro
+            'https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=300&fit=crop', // Zapatos planos rosados
+            'https://images.unsplash.com/photo-1596702762285-182ff435c567?w=400&h=300&fit=crop', // Botines negros
+            'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=400&h=300&fit=crop', // Sandalias plateadas
+            'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&h=300&fit=crop', // Zapatos de tacón beige
+            'https://images.unsplash.com/photo-1607522370275-f14206abe5d3?w=400&h=300&fit=crop', // Deportivos rosados
+            'https://images.unsplash.com/photo-1581101767113-1677fc2beaa8?w=400&h=300&fit=crop', // Zapatos elegantes grises
+            'https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=400&h=300&fit=crop', // Botas de cuero
         ];
         
         for (let i = 260; i <= 320; i++) {
@@ -316,8 +323,47 @@ function getSubjectLabel(value) {
 }
 
 // ============================================
-// THEME MANAGEMENT
+// SAVE PRODUCTS TO SUPABASE
 // ============================================
+async function saveProductsToSupabase() {
+    if (typeof window.supabaseAPI === 'undefined' || !window.supabaseAPI.saveProducts) {
+        console.warn('⚠️ Supabase API no disponible para guardar productos');
+        return false;
+    }
+    
+    try {
+        const success = await window.supabaseAPI.saveProducts(products);
+        if (success) {
+            console.log('✅ Productos guardados en Supabase');
+            // Actualizar localStorage como backup
+            localStorage.setItem('kalebshoes_products', JSON.stringify(products));
+            return true;
+        } else {
+            console.error('❌ Error guardando productos en Supabase');
+            return false;
+        }
+    } catch (error) {
+        console.error('❌ Error guardando productos en Supabase:', error);
+        return false;
+    }
+}
+
+// Función para guardar productos (usada por admin)
+async function saveProducts() {
+    // Intentar guardar en Supabase primero
+    const savedToSupabase = await saveProductsToSupabase();
+    
+    if (!savedToSupabase) {
+        // Fallback: guardar solo en localStorage
+        localStorage.setItem('kalebshoes_products', JSON.stringify(products));
+        console.log('💾 Productos guardados en localStorage (fallback)');
+    }
+    
+    // Actualizar la variable global
+    if (typeof window !== 'undefined') {
+        window.products = products;
+    }
+}
 function initTheme() {
     const themeToggle = document.getElementById('themeToggle');
     const themeIcon = themeToggle?.querySelector('i');
