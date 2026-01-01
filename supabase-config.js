@@ -14,16 +14,32 @@ if (SUPABASE_URL === 'https://iwevhextahozqtlrfpjm.supabase.co' || SUPABASE_ANON
 }
 
 // Cargar librería de Supabase desde CDN
-const script = document.createElement('script');
-script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-script.onload = function() {
-    // La librería crea window.supabase automáticamente
-    initializeSupabase();
-};
-document.head.appendChild(script);
+(function() {
+    // Evitar cargar el script múltiples veces
+    if (window.supabaseScriptLoaded) {
+        return;
+    }
+    window.supabaseScriptLoaded = true;
 
-let supabase = null;
-let isSupabaseReady = false;
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+    script.onload = function() {
+        // La librería crea window.supabase automáticamente
+        initializeSupabase();
+    };
+    script.onerror = function() {
+        console.error('❌ Error cargando la librería Supabase desde CDN');
+    };
+    document.head.appendChild(script);
+})();
+
+// Declarar variables globales solo si no existen
+if (typeof window.supabaseClient === 'undefined') {
+    window.supabaseClient = null;
+}
+if (typeof window.isSupabaseReady === 'undefined') {
+    window.isSupabaseReady = false;
+}
 
 function initializeSupabase() {
     try {
@@ -32,8 +48,14 @@ function initializeSupabase() {
             return;
         }
 
-        supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        isSupabaseReady = true;
+        // Evitar inicializar múltiples veces
+        if (window.supabaseClient) {
+            console.log('✅ Supabase ya estaba inicializado');
+            return;
+        }
+
+        window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        window.isSupabaseReady = true;
         console.log('✅ Supabase inicializado correctamente');
 
         // Trigger evento personalizado para notificar que está listo
@@ -41,7 +63,7 @@ function initializeSupabase() {
     } catch (error) {
         console.error('❌ Error inicializando Supabase:', error);
         // Continuar sin Supabase
-        isSupabaseReady = false;
+        window.isSupabaseReady = false;
     }
 }
 
@@ -53,14 +75,14 @@ function initializeSupabase() {
 async function testSupabaseConnection() {
     console.log('🔍 Probando conexión a Supabase...');
 
-    if (!isSupabaseReady) {
+    if (!window.isSupabaseReady) {
         console.error('❌ Supabase no está inicializado');
         return false;
     }
 
     try {
         // Probar conexión básica
-        const { data, error } = await supabase.from('products').select('count').limit(1);
+        const { data, error } = await window.supabaseClient.from('products').select('count').limit(1);
 
         if (error) {
             console.error('❌ Error conectando a Supabase:', error.message);
@@ -85,7 +107,7 @@ async function createProductsTable() {
 
     try {
         // Crear tabla usando SQL
-        const { error } = await supabase.rpc('create_products_table', {});
+        const { error } = await window.supabaseClient.rpc('create_products_table', {});
 
         if (error) {
             console.error('❌ Error creando tabla:', error.message);
@@ -126,13 +148,13 @@ window.supabaseAPI.testConnection = testSupabaseConnection;
 window.supabaseAPI.createTable = createProductsTable;
 
 async function fetchProducts() {
-    if (!isSupabaseReady) {
+    if (!window.isSupabaseReady) {
         console.warn('Supabase no está listo, usando datos locales');
         return null;
     }
     
     try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabaseClient
             .from('products')
             .select('*')
             .order('reference', { ascending: true });
@@ -160,7 +182,7 @@ async function fetchProducts() {
 }
 
 async function saveProductToDB(product) {
-    if (!isSupabaseReady) return false;
+    if (!window.isSupabaseReady) return false;
     
     try {
         const dbProduct = {
@@ -174,7 +196,7 @@ async function saveProductToDB(product) {
             active: product.active !== false
         };
         
-        const { error } = await supabase
+        const { error } = await window.supabaseClient
             .from('products')
             .upsert(dbProduct, { onConflict: 'reference' });
         
@@ -189,10 +211,10 @@ async function saveProductToDB(product) {
 }
 
 async function deleteProductFromDB(productId) {
-    if (!isSupabaseReady) return false;
+    if (!window.isSupabaseReady) return false;
     
     try {
-        const { error } = await supabase
+        const { error } = await window.supabaseClient
             .from('products')
             .delete()
             .eq('id', productId);
@@ -212,7 +234,7 @@ async function deleteProductFromDB(productId) {
 // ============================================
 
 async function saveOrderToDB(order) {
-    if (!isSupabaseReady) return null;
+    if (!window.isSupabaseReady) return null;
     
     try {
         const dbOrder = {
@@ -229,7 +251,7 @@ async function saveOrderToDB(order) {
             send_type: order.sendType || 'whatsapp'
         };
         
-        const { data, error } = await supabase
+        const { data, error } = await window.supabaseClient
             .from('orders')
             .insert(dbOrder)
             .select()
@@ -249,7 +271,7 @@ async function fetchOrders(userPhone = null) {
     if (!isSupabaseReady) return null;
     
     try {
-        let query = supabase
+        let query = window.supabaseClient
             .from('orders')
             .select('*')
             .order('created_at', { ascending: false });
@@ -297,7 +319,7 @@ async function updateOrderStatus(orderId, status) {
     if (!isSupabaseReady) return false;
     
     try {
-        const { error } = await supabase
+        const { error } = await window.supabaseClient
             .from('orders')
             .update({ status: status })
             .eq('id', orderId);
@@ -320,7 +342,7 @@ async function saveUserToDB(user) {
     if (!isSupabaseReady) return null;
     
     try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabaseClient
             .from('users')
             .upsert({
                 name: user.name,
@@ -344,7 +366,7 @@ async function fetchUserByPhone(phone) {
     if (!isSupabaseReady) return null;
     
     try {
-        const { data, error } = await supabase
+        const { data, error } = await window.supabaseClient
             .from('users')
             .select('*')
             .eq('phone', phone)
@@ -373,7 +395,7 @@ async function fetchUserByPhone(phone) {
 function subscribeToProducts(callback) {
     if (!isSupabaseReady) return null;
     
-    const subscription = supabase
+    const subscription = window.supabaseClient
         .channel('products-changes')
         .on('postgres_changes', 
             { event: '*', schema: 'public', table: 'products' },
@@ -388,22 +410,7 @@ function subscribeToProducts(callback) {
 function subscribeToOrders(callback) {
     if (!isSupabaseReady) return null;
     
-    const subscription = supabase
-        .channel('orders-changes')
-        .on('postgres_changes',
-            { event: '*', schema: 'public', table: 'orders' },
-            callback
-        )
-        .subscribe();
-    
-    console.log('🔔 Suscrito a cambios en pedidos');
-    return subscription;
-}
-
-function subscribeToOrders(callback) {
-    if (!isSupabaseReady) return null;
-    
-    const subscription = supabase
+    const subscription = window.supabaseClient
         .channel('orders-changes')
         .on('postgres_changes',
             { event: '*', schema: 'public', table: 'orders' },
@@ -421,7 +428,7 @@ async function saveProducts(productsArray) {
     
     try {
         // Primero, obtener productos existentes para comparar
-        const { data: existingProducts, error: fetchError } = await supabase
+        const { data: existingProducts, error: fetchError } = await window.supabaseClient
             .from('products')
             .select('id');
         
@@ -447,7 +454,7 @@ async function saveProducts(productsArray) {
         
         // Eliminar productos que ya no existen
         if (toDelete.length > 0) {
-            const { error: deleteError } = await supabase
+            const { error: deleteError } = await window.supabaseClient
                 .from('products')
                 .delete()
                 .in('id', toDelete);
@@ -458,7 +465,7 @@ async function saveProducts(productsArray) {
         
         // Insertar/actualizar productos
         if (toUpsert.length > 0) {
-            const { error: upsertError } = await supabase
+            const { error: upsertError } = await window.supabaseClient
                 .from('products')
                 .upsert(toUpsert, { onConflict: 'id' });
             

@@ -234,8 +234,8 @@ body.dark-theme .navbar {
 }
 
 .brand-logo {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     border-radius: 12px;
     display: flex;
     align-items: center;
@@ -698,6 +698,21 @@ body.dark-theme .navbar {
 
 .image-wrapper:hover .hero-img {
     transform: scale(1.05);
+}
+
+.hero-logo {
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin: 0 auto;
+    object-fit: contain;
+    transition: var(--transition-slow);
+    border-radius: 20px;
+    box-shadow: var(--shadow-xl);
+}
+
+.image-wrapper:hover .hero-logo {
+    transform: scale(1.1) rotate(5deg);
 }
 
 .scroll-indicator {
@@ -1768,6 +1783,7 @@ body.dark-theme .image-badge {
     gap: 0;
     max-height: 85vh;
     overflow-y: auto;
+    align-items: start;
 }
 
 .modal-image {
@@ -1777,11 +1793,17 @@ body.dark-theme .image-badge {
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: sticky;
+    top: 0;
+    height: fit-content;
+    min-height: 300px;
 }
 
 .modal-image img {
     width: 100%;
     height: auto;
+    max-height: 400px;
+    object-fit: contain;
     border-radius: 16px;
     box-shadow: var(--shadow-lg);
 }
@@ -3385,10 +3407,18 @@ body.dark-theme .image-badge {
     
     .modal-body {
         grid-template-columns: 1fr;
+        max-height: 80vh;
     }
-    
+
     .modal-image {
-        padding: 1.5rem;
+        padding: 1rem;
+        min-height: 250px;
+        position: relative;
+        order: -1;
+    }
+
+    .modal-image img {
+        max-height: 300px;
     }
     
     .modal-info {
@@ -4290,8 +4320,8 @@ body.dark-theme .image-badge {
 /* Logo Images Responsive */
 @media (max-width: 768px) {
     .brand-logo {
-        width: 40px;
-        height: 40px;
+        width: 50px;
+        height: 50px;
     }
 
     .loader-logo {
@@ -4303,12 +4333,17 @@ body.dark-theme .image-badge {
         width: 50px;
         height: 50px;
     }
+
+    .hero-logo {
+        width: 200px;
+        height: 200px;
+    }
 }
 
 @media (max-width: 480px) {
     .brand-logo {
-        width: 35px;
-        height: 35px;
+        width: 40px;
+        height: 40px;
     }
 
     .loader-logo {
@@ -4319,6 +4354,11 @@ body.dark-theme .image-badge {
     .footer-brand .brand-logo {
         width: 45px;
         height: 45px;
+    }
+
+    .hero-logo {
+        width: 150px;
+        height: 150px;
     }
 }
 

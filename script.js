@@ -839,10 +839,7 @@ window.goToCheckout = function() {
         return;
     }
     
-    // Si está registrado, proceder con el pedido
-    sendCartToWhatsApp();
-    
-    /* Código alternativo: Ir al formulario
+    // Ir al formulario de contacto en lugar de WhatsApp directamente
     // Cerrar carrito
     closeCart();
     
@@ -855,9 +852,12 @@ window.goToCheckout = function() {
         const subjectSelect = document.getElementById('subject');
         if (subjectSelect) {
             subjectSelect.value = 'pedido';
+            // Trigger change event para mostrar selector de productos
+            subjectSelect.dispatchEvent(new Event('change'));
         }
+        
+        showNotification('Completa el formulario de contacto para finalizar tu pedido', 'success');
     }
-    */
 }
 
 // Enviar carrito completo por WhatsApp
