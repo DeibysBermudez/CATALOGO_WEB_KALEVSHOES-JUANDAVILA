@@ -4,17 +4,13 @@
 
 // IMPORTANTE: Reemplaza estos valores con los de tu proyecto Supabase
 // Los encuentras en: Settings > API
-// Para producción, configura estas variables en Vercel Dashboard > Environment Variables
-const SUPABASE_URL = process.env.SUPABASE_URL || 'https://iwevhextahozqtlrfpjm.supabase.co'; // Ejemplo: https://xxxxx.supabase.co
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZXZoZXh0YWhvenF0bHJmcGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMzA1NTEsImV4cCI6MjA4MjcwNjU1MX0.3UefHZDlxnqoPoasrISK6ZNpXZ4ucNjYUZ5bLxYr_1g'; // Key pública
+const SUPABASE_URL = 'https://iwevhextahozqtlrfpjm.supabase.co'; // Ejemplo: https://xxxxx.supabase.co
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZXZoZXh0YWhvenF0bHJmcGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMzA1NTEsImV4cCI6MjA4MjcwNjU1MX0.3UefHZDlxnqoPoasrISK6ZNpXZ4ucNjYUZ5bLxYr_1g'; // Key pública
 
 // Verificar que las credenciales estén configuradas
 if (SUPABASE_URL === 'https://iwevhextahozqtlrfpjm.supabase.co' || SUPABASE_ANON_KEY === 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3ZXZoZXh0YWhvenF0bHJmcGptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjcxMzA1NTEsImV4cCI6MjA4MjcwNjU1MX0.3UefHZDlxnqoPoasrISK6ZNpXZ4ucNjYUZ5bLxYr_1g') {
     console.warn('⚠️ ATENCIÓN: Debes configurar las credenciales de Supabase');
-    console.warn('📝 Para desarrollo local, crea un archivo .env con:');
-    console.warn('   SUPABASE_URL=https://tu-proyecto.supabase.co');
-    console.warn('   SUPABASE_ANON_KEY=tu_clave_anonima');
-    console.warn('📝 Para Vercel, configura las variables en el dashboard.');
+    console.warn('📝 Edita el archivo supabase-config.js con tus credenciales');
 }
 
 // Cargar librería de Supabase desde CDN
