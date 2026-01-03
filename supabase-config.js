@@ -494,3 +494,4 @@ window.supabaseAPI = {
     subscribeToProducts,
     subscribeToOrders
 };
+

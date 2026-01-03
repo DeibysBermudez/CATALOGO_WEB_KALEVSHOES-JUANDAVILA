@@ -1,5 +1,5 @@
 // ============================================
-// ADMIN PANEL SCRIPT
+// ADMIN PANEL SCRIPT - FIXED VERSION
 // ============================================
 
 const ADMIN_CREDENTIALS = {
@@ -32,18 +32,15 @@ function showDashboard() {
     if (loginScreen) loginScreen.style.display = 'none';
     if (dashboard) {
         dashboard.style.display = 'flex';
-        // Load orders
-        loadOrders();
+        loadDashboardData();
     }
 }
 
 function handleAdminLogin(e) {
-    e.preventDefault(); // Siempre prevenir el envío del formulario
+    e.preventDefault();
 
     const username = document.getElementById('adminUsername').value.trim();
     const password = document.getElementById('adminPassword').value.trim();
-    const errorDiv = document.getElementById('adminLoginError');
-    const errorText = document.getElementById('adminLoginErrorText');
 
     if (!username || !password) {
         showError('Por favor completa todos los campos');
@@ -74,6 +71,66 @@ function logoutAdmin() {
     localStorage.removeItem('adminLogged');
     showLogin();
     document.getElementById('adminLoginForm').reset();
+}
+
+// ============================================
+// LOAD DASHBOARD DATA
+// ============================================
+function loadDashboardData() {
+    console.log('📊 Cargando datos del dashboard...');
+    
+    // Actualizar estadísticas
+    updateDashboardStats();
+    
+    // Cargar pedidos
+    loadOrders();
+    
+    // Cargar productos
+    loadProducts();
+}
+
+function updateDashboardStats() {
+    const orders = getAllOrders();
+    const stats = getOrderStats();
+    
+    // Total pedidos
+    const statTotalOrders = document.getElementById('statTotalOrders');
+    if (statTotalOrders) {
+        statTotalOrders.textContent = stats.total;
+    }
+    
+    // Total productos activos
+    const statTotalProducts = document.getElementById('statTotalProducts');
+    if (statTotalProducts && typeof products !== 'undefined') {
+        const activeProducts = products.filter(p => p.active !== false);
+        statTotalProducts.textContent = activeProducts.length;
+    }
+    
+    // Calcular ingresos
+    let totalRevenue = 0;
+    orders.forEach(order => {
+        if (order.products && order.products.length > 0) {
+            order.products.forEach(item => {
+                totalRevenue += item.price * item.totalPairs;
+            });
+        }
+    });
+    
+    const statTotalRevenue = document.getElementById('statTotalRevenue');
+    if (statTotalRevenue) {
+        statTotalRevenue.textContent = `$${totalRevenue.toLocaleString('es-CO')}`;
+    }
+    
+    // Actualizar badges
+    const ordersBadge = document.getElementById('ordersBadge');
+    if (ordersBadge) {
+        ordersBadge.textContent = stats.total;
+    }
+    
+    const productsBadge = document.getElementById('productsBadge');
+    if (productsBadge && typeof products !== 'undefined') {
+        productsBadge.textContent = products.length;
+    }
 }
 
 // ============================================
@@ -111,8 +168,7 @@ function switchSection(sectionName) {
     
     // Load section content
     if (sectionName === 'dashboard') {
-        // Dashboard básico - solo cargar órdenes por ahora
-        loadOrders();
+        loadDashboardData();
     } else if (sectionName === 'orders') {
         loadOrders();
     } else if (sectionName === 'products') {
@@ -128,6 +184,11 @@ function switchSection(sectionName) {
 function loadOrders() {
     const orders = getAllOrders();
     const container = document.getElementById('adminOrdersList');
+    
+    if (!container) {
+        console.error('❌ No se encontró adminOrdersList');
+        return;
+    }
     
     if (orders.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: var(--text-light); padding: 2rem;">No hay pedidos</p>';
@@ -157,7 +218,7 @@ function loadOrders() {
                     <div class="order-date">${order.dateFormatted || new Date(order.timestamp).toLocaleString('es-CO')}</div>
                 </div>
                 <div class="order-status-controls">
-                    <select class="order-status-select" onchange="updateOrderStatus(${order.id}, this.value)" data-order-id="${order.id}">
+                    <select class="order-status-select" onchange="updateOrderStatus(${order.id}, this.value)">
                         <option value="nuevo" ${status === 'nuevo' ? 'selected' : ''}>Nuevo</option>
                         <option value="en_proceso" ${status === 'en_proceso' ? 'selected' : ''}>En Proceso</option>
                         <option value="enviado" ${status === 'enviado' ? 'selected' : ''}>Enviado</option>
@@ -217,63 +278,25 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Agregar estilos para notificaciones
-const notificationStyle = document.createElement('style');
-notificationStyle.textContent = `
-    .notification {
-        position: fixed;
-        top: 100px;
-        right: -400px;
-        background: var(--bg);
-        padding: 1rem 1.5rem;
-        border-radius: 12px;
-        box-shadow: var(--shadow-xl);
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        z-index: 10000;
-        transition: right 0.3s ease;
-        border-left: 4px solid var(--primary);
-        min-width: 300px;
-    }
-    
-    .notification.show {
-        right: 30px;
-    }
-    
-    .notification-success {
-        border-left-color: var(--success);
-    }
-    
-    .notification-error {
-        border-left-color: var(--error);
-    }
-    
-    .notification i {
-        font-size: 1.2rem;
-        color: var(--primary);
-    }
-    
-    .notification-success i {
-        color: var(--success);
-    }
-    
-    .notification-error i {
-        color: var(--error);
-    }
-`;
-document.head.appendChild(notificationStyle);
-
 // ============================================
 // PRODUCTS
 // ============================================
 function loadProducts() {
+    if (typeof products === 'undefined') {
+        console.error('❌ Variable products no definida');
+        return;
+    }
+    
     const activeProducts = products.filter(p => p.active !== false);
     const inactiveProducts = products.filter(p => p.active === false);
     
-    document.getElementById('productsTotal').textContent = products.length;
-    document.getElementById('productsActive').textContent = activeProducts.length;
-    document.getElementById('productsInactive').textContent = inactiveProducts.length;
+    const totalElement = document.getElementById('productsTotal');
+    const activeElement = document.getElementById('productsActive');
+    const inactiveElement = document.getElementById('productsInactive');
+    
+    if (totalElement) totalElement.textContent = products.length;
+    if (activeElement) activeElement.textContent = activeProducts.length;
+    if (inactiveElement) inactiveElement.textContent = inactiveProducts.length;
     
     renderProductsList();
 }
@@ -281,14 +304,16 @@ function loadProducts() {
 function renderProductsList() {
     const container = document.getElementById('adminProductsList');
     
-    if (products.length === 0) {
+    if (!container) {
+        console.error('❌ No se encontró adminProductsList');
+        return;
+    }
+    
+    if (typeof products === 'undefined' || products.length === 0) {
         container.innerHTML = `
             <div style="text-align: center; padding: 2rem; color: var(--text-light);">
                 <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
                 <p>No hay productos registrados</p>
-                <button class="btn btn-primary" onclick="openAddProductModal()" style="margin-top: 1rem;">
-                    <i class="fas fa-plus"></i> Agregar Primer Producto
-                </button>
             </div>
         `;
         return;
@@ -334,14 +359,22 @@ function openEditProductModal(productId) {
 }
 
 function showProductModal(product = null) {
-    const isEdit = product !== null;
     const modal = document.getElementById('productModalAdmin');
+    if (!modal) return;
+    
+    const isEdit = product !== null;
     const title = document.getElementById('productModalTitle');
     const submitText = document.getElementById('productFormSubmitText');
     
+    if (title) {
+        title.innerHTML = isEdit ? '<i class="fas fa-edit"></i> Editar Producto' : '<i class="fas fa-plus"></i> Agregar Producto';
+    }
+    
+    if (submitText) {
+        submitText.textContent = isEdit ? 'Guardar Cambios' : 'Agregar Producto';
+    }
+    
     if (isEdit) {
-        title.innerHTML = '<i class="fas fa-edit"></i> Editar Producto';
-        submitText.textContent = 'Guardar Cambios';
         document.getElementById('productReference').value = product.reference;
         document.getElementById('productCategory').value = product.category;
         document.getElementById('productPrice').value = product.price;
@@ -350,8 +383,6 @@ function showProductModal(product = null) {
         document.getElementById('productActive').checked = product.active !== false;
         document.getElementById('productReference').disabled = true;
     } else {
-        title.innerHTML = '<i class="fas fa-plus"></i> Agregar Producto';
-        submitText.textContent = 'Agregar Producto';
         document.getElementById('productForm').reset();
         document.getElementById('productActive').checked = true;
         document.getElementById('productReference').disabled = false;
@@ -361,7 +392,10 @@ function showProductModal(product = null) {
 }
 
 function closeProductModal() {
-    document.getElementById('productModalAdmin').style.display = 'none';
+    const modal = document.getElementById('productModalAdmin');
+    if (modal) {
+        modal.style.display = 'none';
+    }
 }
 
 function saveProduct(productId = null) {
@@ -411,7 +445,7 @@ function saveProduct(productId = null) {
     saveProducts();
     closeProductModal();
     loadProducts();
-    alert('Producto guardado correctamente');
+    showNotification('Producto guardado correctamente', 'success');
 }
 
 function toggleProductStatus(productId) {
@@ -421,10 +455,11 @@ function toggleProductStatus(productId) {
     product.active = product.active === false ? true : false;
     saveProducts();
     loadProducts();
+    showNotification(`Producto ${product.active ? 'activado' : 'desactivado'}`, 'success');
 }
 
 function deleteProduct(productId) {
-    if (!confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.')) {
+    if (!confirm('¿Estás seguro de que deseas eliminar este producto?')) {
         return;
     }
     
@@ -433,6 +468,7 @@ function deleteProduct(productId) {
         products.splice(index, 1);
         saveProducts();
         loadProducts();
+        showNotification('Producto eliminado', 'success');
     }
 }
 
@@ -442,6 +478,8 @@ function deleteProduct(productId) {
 function loadStats() {
     const stats = getOrderStats();
     const container = document.getElementById('adminStatsContainer');
+    
+    if (!container) return;
     
     let totalRevenue = 0;
     const orders = getAllOrders();
@@ -495,12 +533,62 @@ function loadStats() {
 }
 
 // ============================================
+// EXPORT ORDERS
+// ============================================
+function exportOrders() {
+    try {
+        const orders = getAllOrders();
+        
+        if (!orders || orders.length === 0) {
+            alert('No hay pedidos para exportar');
+            return;
+        }
+        
+        const exportData = {
+            exportDate: new Date().toISOString(),
+            totalOrders: orders.length,
+            orders: orders.map(order => ({
+                id: order.id,
+                timestamp: order.timestamp,
+                dateFormatted: order.dateFormatted,
+                status: order.status || 'nuevo',
+                name: order.name,
+                phone: order.phone,
+                email: order.email || '',
+                subject: order.subject,
+                message: order.message,
+                products: order.products || [],
+                totalPairs: order.totalPairs || 0
+            }))
+        };
+        
+        const dataStr = JSON.stringify(exportData, null, 2);
+        const dataBlob = new Blob([dataStr], {type: 'application/json'});
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `pedidos_kalev_shoes_${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        showNotification(`${orders.length} pedidos exportados`, 'success');
+    } catch (error) {
+        console.error('Error al exportar pedidos:', error);
+        alert('Error al exportar pedidos');
+    }
+}
+
+// ============================================
 // INITIALIZATION
 // ============================================
 function initializeAdmin() {
-    // Verificar que las funciones compartidas estén disponibles
+    console.log('🚀 Inicializando panel de administrador...');
+    
+    // Verificar funciones compartidas
     if (typeof getAllOrders === 'undefined' || typeof getOrderStats === 'undefined') {
-        console.error('Error: Las funciones compartidas no están disponibles');
+        console.error('❌ Funciones compartidas no disponibles');
         setTimeout(initializeAdmin, 100);
         return;
     }
@@ -534,88 +622,17 @@ function initializeAdmin() {
             saveProduct(productId);
         });
     }
+    
+    console.log('✅ Panel de administrador inicializado');
 }
 
 document.addEventListener('DOMContentLoaded', initializeAdmin);
 
-// ============================================
-// EXPORT ORDERS FUNCTIONALITY
-// ============================================
-function exportOrders() {
-    try {
-        const orders = getAllOrders();
-        
-        if (!orders || orders.length === 0) {
-            alert('No hay pedidos para exportar');
-            return;
-        }
-        
-// ============================================
-// EXPORT ORDERS FUNCTION
-// ============================================
-function exportOrders() {
-    try {
-        console.log('📤 Iniciando exportación de pedidos...');
-
-        // Obtener todos los pedidos
-        const orders = getAllOrders();
-
-        if (!orders || orders.length === 0) {
-            alert('No hay pedidos para exportar');
-            return;
-        }
-
-        // Formatear datos para exportación
-        const exportData = {
-            exportDate: new Date().toISOString(),
-            totalOrders: orders.length,
-            orders: orders.map(order => ({
-                id: order.id,
-                timestamp: order.timestamp,
-                dateFormatted: order.dateFormatted,
-                status: order.status || 'nuevo',
-                name: order.name,
-                phone: order.phone,
-                email: order.email || '',
-                subject: order.subject,
-                product: order.product || '',
-                message: order.message,
-                products: order.products || [],
-                totalPairs: order.totalPairs || 0,
-                whatsappSent: order.whatsappSent || false,
-                emailSent: order.emailSent || false,
-                sendType: order.sendType || 'whatsapp'
-            }))
-        };
-
-        // Crear blob con datos JSON
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-
-        // Crear enlace de descarga
-        const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `pedidos_kalev_shoes_${new Date().toISOString().split('T')[0]}.json`;
-
-        // Simular click para descargar
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        // Liberar URL
-        URL.revokeObjectURL(url);
-
-        console.log(`✅ Exportados ${orders.length} pedidos correctamente`);
-        alert(`Se han exportado ${orders.length} pedidos exitosamente`);
-
-    } catch (error) {
-        console.error('Error al exportar pedidos:', error);
-        alert('Error al exportar pedidos. Revisa la consola para más detalles.');
-    }
-}
-
-// Agregar función al objeto global kalevshoesAdmin
-window.kalevshoesAdmin = window.kalevshoesAdmin || {};
-window.kalevshoesAdmin.exportOrders = exportOrders;
-
+// Exponer funciones globales
+window.updateOrderStatus = updateOrderStatus;
+window.openEditProductModal = openEditProductModal;
+window.toggleProductStatus = toggleProductStatus;
+window.deleteProduct = deleteProduct;
+window.exportOrders = exportOrders;
+window.openAddProductModal = openAddProductModal;
+window.closeProductModal = closeProductModal;

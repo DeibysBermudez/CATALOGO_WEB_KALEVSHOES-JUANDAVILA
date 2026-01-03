@@ -1,0 +1,31 @@
+{
+    "version": 2,
+    "builds": [
+      {
+        "src": "**/*.html",
+        "use": "@vercel/static"
+      },
+      {
+        "src": "**/*.{js,css,png,jpg,jpeg,gif,svg}",
+        "use": "@vercel/static"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/",
+        "dest": "/index.html"
+      },
+      {
+        "src": "/admin",
+        "dest": "/admin.html"
+      },
+      {
+        "src": "/user",
+        "dest": "/user.html"
+      },
+      {
+        "src": "/(.*)",
+        "dest": "/$1"
+      }
+    ]
+  }
