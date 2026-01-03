@@ -143,9 +143,7 @@ CREATE TABLE products (
 }
 
 // Exponer funciones de diagnóstico
-window.supabaseAPI = window.supabaseAPI || {};
-window.supabaseAPI.testConnection = testSupabaseConnection;
-window.supabaseAPI.createTable = createProductsTable;
+// (Ahora se incluyen en la exportación final)
 
 async function fetchProducts() {
     if (!window.isSupabaseReady) {
@@ -482,6 +480,8 @@ async function saveProducts(productsArray) {
 
 // Exportar funciones globalmente
 window.supabaseAPI = {
+    testConnection: testSupabaseConnection,
+    createTable: createProductsTable,
     fetchProducts,
     saveProducts,
     saveProductToDB,
