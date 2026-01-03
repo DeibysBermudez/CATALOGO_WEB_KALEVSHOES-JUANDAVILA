@@ -121,6 +121,24 @@ function updateDashboardStats() {
         statTotalRevenue.textContent = `$${totalRevenue.toLocaleString('es-CO')}`;
     }
     
+    // Calcular clientes únicos
+    const uniqueCustomers = new Set();
+    orders.forEach(order => {
+        if (order.customerInfo && order.customerInfo.email) {
+            uniqueCustomers.add(order.customerInfo.email);
+        }
+    });
+    const statTotalCustomers = document.getElementById('statTotalCustomers');
+    if (statTotalCustomers) {
+        statTotalCustomers.textContent = uniqueCustomers.size;
+    }
+    
+    // Calificación promedio (simulado, ya que no hay ratings reales)
+    const statAvgRating = document.getElementById('statAvgRating');
+    if (statAvgRating) {
+        statAvgRating.textContent = '4.8'; // Placeholder
+    }
+    
     // Actualizar badges
     const ordersBadge = document.getElementById('ordersBadge');
     if (ordersBadge) {

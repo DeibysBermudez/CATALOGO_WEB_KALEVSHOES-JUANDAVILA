@@ -2504,6 +2504,7 @@ function openAdminAccessModal() {
     });
     
     modal.classList.add('active');
+    modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
@@ -2566,8 +2567,8 @@ function handleAdminLogin() {
         // Login successful
         localStorage.setItem('adminLogged', 'true');
         closeAdminAccessModal();
-        checkAdminStatus();
-        showNotification('Sesión iniciada correctamente', 'success');
+        // Redirect to admin page
+        window.location.href = 'admin.html';
     } else {
         showAdminLoginError('Usuario o contraseña incorrectos');
     }
@@ -2591,6 +2592,7 @@ function closeAdminAccessModal() {
     const modal = document.getElementById('adminAccessModal');
     if (modal) {
         modal.classList.remove('active');
+        modal.style.display = 'none';
         document.body.style.overflow = '';
     }
 }
@@ -3284,7 +3286,9 @@ function initializeApp() {
         // Admin access button
         const adminAccessBtn = document.getElementById('adminAccessBtn');
         if (adminAccessBtn) {
-            adminAccessBtn.addEventListener('click', openAdminAccessModal);
+            adminAccessBtn.addEventListener('click', () => {
+                window.location.href = 'admin.html';
+            });
             console.log('✓ Botón de acceso administrador configurado');
         }
         
