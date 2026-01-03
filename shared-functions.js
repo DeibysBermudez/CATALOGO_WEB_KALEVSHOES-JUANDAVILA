@@ -405,3 +405,46 @@ if (typeof window !== 'undefined') {
     };
 }
 
+// ============================================
+// SYNC PRODUCTS TO SUPABASE
+// ============================================
+async function syncProductsToSupabase() {
+    console.log('🔄 Iniciando sincronización de productos a Supabase...');
+    
+    try {
+        // Asegurarse de que hay productos
+        if (products.length === 0) {
+            console.log('📦 Generando productos iniciales...');
+            generateInitialProducts();
+        }
+        
+        // Verificar que Supabase esté disponible
+        if (typeof window.supabaseAPI === 'undefined' || !window.supabaseAPI.saveProducts) {
+            console.error('❌ Supabase API no disponible');
+            return false;
+        }
+        
+        // Subir productos a Supabase
+        const success = await window.supabaseAPI.saveProducts(products);
+        
+        if (success) {
+            console.log(`✅ ${products.length} productos sincronizados exitosamente con Supabase`);
+            // Cambiar a usar Supabase
+            useLocalStorage = false;
+            return true;
+        } else {
+            console.error('❌ Error sincronizando productos');
+            return false;
+        }
+        
+    } catch (error) {
+        console.error('❌ Error en sincronización:', error);
+        return false;
+    }
+}
+
+// Exponer función globalmente
+if (typeof window !== 'undefined') {
+    window.syncProductsToSupabase = syncProductsToSupabase;
+}
+
